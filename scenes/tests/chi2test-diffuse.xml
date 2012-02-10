@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<test type="chi2">
+<test type="chi2test">
 	<!-- Test the diffuse material with the default configuration -->
 	<bsdf type="diffuse"/>
 </test>

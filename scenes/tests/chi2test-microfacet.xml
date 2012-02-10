@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<test type="chi2">
+<test type="chi2test">
 	<!-- Test a few different configurations of the microfacet model -->
 	<bsdf type="microfacet">
 		<float name="alpha" value="0.1"/>

@@ -363,5 +363,5 @@ private:
 	std::vector<BSDF *> m_bsdfs;
 };
 
-NORI_REGISTER_CLASS(ChiSquareTest, "chi2");
+NORI_REGISTER_CLASS(ChiSquareTest, "chi2test");
 NORI_NAMESPACE_END
