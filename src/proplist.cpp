@@ -21,7 +21,7 @@
 NORI_NAMESPACE_BEGIN
 
 #define DEFINE_PROPERTY_ACCESSOR(Type, TypeName, XmlName) \
-	void PropertyList::set##TypeName(const QString &name, Type value) { \
+	void PropertyList::set##TypeName(const QString &name, const Type &value) { \
 		if (m_properties.find(name) != m_properties.end()) \
 			cerr << "Property \"" << qPrintable(name) <<  "\" was specified multiple times!" << endl; \
 		m_properties[name] = value; \
@@ -38,7 +38,7 @@ NORI_NAMESPACE_BEGIN
 		return (Type) *result; \
 	} \
 	\
-	Type PropertyList::get##TypeName(const QString &name, Type defVal) const { \
+	Type PropertyList::get##TypeName(const QString &name, const Type &defVal) const { \
 		std::map<QString, Property>::const_iterator it = m_properties.find(name); \
 		if (it == m_properties.end()) \
 			return defVal; \

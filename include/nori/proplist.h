@@ -35,76 +35,76 @@ public:
 	PropertyList() { }
 
 	/// Set a boolean property
-	void setBoolean(const QString &name, bool value);
+	void setBoolean(const QString &name, const bool &value);
 	
 	/// Get a boolean property, and throw an exception if it does not exist
 	bool getBoolean(const QString &name) const;
 
 	/// Get a boolean property, and use a default value if it does not exist
-	bool getBoolean(const QString &name, bool defaultValue) const;
+	bool getBoolean(const QString &name, const bool &defaultValue) const;
 
 	/// Set an integer property
-	void setInteger(const QString &name, int value);
+	void setInteger(const QString &name, const int &value);
 	
 	/// Get an integer property, and throw an exception if it does not exist
 	int getInteger(const QString &name) const;
 
 	/// Get am integer property, and use a default value if it does not exist
-	int getInteger(const QString &name, int defaultValue) const;
+	int getInteger(const QString &name, const int &defaultValue) const;
 
 	/// Set a float property
-	void setFloat(const QString &name, float value);
+	void setFloat(const QString &name, const float &value);
 	
 	/// Get a float property, and throw an exception if it does not exist
 	float getFloat(const QString &name) const;
 
 	/// Get a float property, and use a default value if it does not exist
-	float getFloat(const QString &name, float defaultValue) const;
+	float getFloat(const QString &name, const float &defaultValue) const;
 
 	/// Set a string property
-	void setString(const QString &name, QString value);
+	void setString(const QString &name, const QString &value);
 
 	/// Get a string property, and throw an exception if it does not exist
 	QString getString(const QString &name) const;
 
 	/// Get a string property, and use a default value if it does not exist
-	QString getString(const QString &name, QString defaultValue) const;
+	QString getString(const QString &name, const QString &defaultValue) const;
 
 	/// Set a color property
-	void setColor(const QString &name, Color3f value);
+	void setColor(const QString &name, const Color3f &value);
 
 	/// Get a color property, and throw an exception if it does not exist
 	Color3f getColor(const QString &name) const;
 
 	/// Get a color property, and use a default value if it does not exist
-	Color3f getColor(const QString &name, Color3f defaultValue) const;
+	Color3f getColor(const QString &name, const Color3f &defaultValue) const;
 
 	/// Set a point property
-	void setPoint(const QString &name, Point3f value);
+	void setPoint(const QString &name, const Point3f &value);
 
 	/// Get a point property, and throw an exception if it does not exist
 	Point3f getPoint(const QString &name) const;
 
 	/// Get a point property, and use a default value if it does not exist
-	Point3f getPoint(const QString &name, Point3f defaultValue) const;
+	Point3f getPoint(const QString &name, const Point3f &defaultValue) const;
 
 	/// Set a vector property
-	void setVector(const QString &name, Vector3f value);
+	void setVector(const QString &name, const Vector3f &value);
 
 	/// Get a vector property, and throw an exception if it does not exist
 	Vector3f getVector(const QString &name) const;
 
 	/// Get a vector property, and use a default value if it does not exist
-	Vector3f getVector(const QString &name, Vector3f defaultValue) const;
+	Vector3f getVector(const QString &name, const Vector3f &defaultValue) const;
 
 	/// Set a transform property
-	void setTransform(const QString &name, Transform value);
+	void setTransform(const QString &name, const Transform &value);
 
 	/// Get a transform property, and throw an exception if it does not exist
 	Transform getTransform(const QString &name) const;
 
 	/// Get a transform property, and use a default value if it does not exist
-	Transform getTransform(const QString &name, Transform defaultValue) const;
+	Transform getTransform(const QString &name, const Transform &defaultValue) const;
 private:
 	typedef boost::variant<bool, int, float, QString, 
 		Color3f, Point3f, Transform> Property;
