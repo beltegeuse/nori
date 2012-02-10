@@ -21,13 +21,19 @@ OBJECTS_DIR = build
 RCC_DIR = build
 MOC_DIR = build
 UI_DIR = build
+DESTDIR = .
 
 QT += xml xmlpatterns opengl
-QMAKE_CXXFLAGS += -fopenmp -O3 -march=nocona -msse2 -mfpmath=sse
-QMAKE_LFLAGS += -fopenmp
+
+macx | unix {
+	QMAKE_CXXFLAGS += -O3 -march=nocona -msse2 -mfpmath=sse
+}
+
+win32 {
+	QMAKE_CXXFLAGS += /O2 /fp:fast /GS- /GL
+	QMAKE_LDFLAGS += /LTCG
+}
 
 TARGET = nori
 CONFIG += console
 CONFIG -= app_bundle
-
-

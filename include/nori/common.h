@@ -37,6 +37,19 @@
 /* "Ray epsilon": relative error threshold for ray intersection computations */
 #define Epsilon 1e-4f
 
+/* A few other constants */
+#ifndef M_E
+#define M_E          2.71828182845904523536f
+#endif
+#ifndef M_PI
+#define M_PI         3.14159265358979323846f
+#endif
+#define INV_PI       0.31830988618379067154f
+#define INV_TWOPI    0.15915494309189533577f
+#define INV_FOURPI   0.07957747154594766788f
+#define SQRT_TWO     1.41421356237309504880f
+#define INV_SQRT_TWO 0.70710678118654752440f
+
 NORI_NAMESPACE_BEGIN
 
 /* Forward declarations */
@@ -152,19 +165,6 @@ Point2f sphericalCoordinates(const Vector3f &dir);
 		*_cos = cosf(theta);
 	}
 #endif
-
-/* A few constants */
-#ifndef M_E
-#define M_E          2.71828182845904523536f
-#endif
-#ifndef M_PI
-#define M_PI         3.14159265358979323846f
-#endif
-#define INV_PI       0.31830988618379067154f
-#define INV_TWOPI    0.15915494309189533577f
-#define INV_FOURPI   0.07957747154594766788f
-#define SQRT_TWO     1.41421356237309504880f
-#define INV_SQRT_TWO 0.70710678118654752440f
 
 NORI_NAMESPACE_END
 

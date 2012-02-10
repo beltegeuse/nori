@@ -196,7 +196,7 @@ public:
 		for (std::vector<Cell>::iterator it = cells.begin();
 				it != cells.end(); ++it) {
 
-			int index = it->index;
+			size_t index = it->index;
 			if (m_expFrequencies[index] == 0) {
 				if (m_frequencies[index] > m_sampleCount * 1e-5f) {
 					/* Uh oh: samples in a cell that should be completely empty
