@@ -1,0 +1,11 @@
+Nori is a simple ray tracer written in C++. It runs on Windows, 
+Linux, and Mac OS and provides basic functionality that is 
+required to complete the projects in CS6630.
+
+For more details, see
+
+http://www.cs.cornell.edu/Courses/cs6630/2012sp
+
+and
+
+http://www.cs.cornell.edu/Courses/cs6630/2012sp/nori

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<test type="ttest">
+	<!-- The diffuse BRDF doesn't depend on the reflected direction,
+		 so these are all the same -->
+	<string name="angles"     value="0,   45,  60,  80,  85"/>
+	<string name="references" value="0.5, 0.5, 0.5, 0.5, 0.5"/>
+
+	<bsdf type="diffuse">
+		<color name="albedo" value="0.5, 0.5, 0.5"/>
+	</bsdf>
+</test>
