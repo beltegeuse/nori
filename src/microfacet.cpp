@@ -38,7 +38,7 @@ public:
 
 		/* To ensure energy conservation, we must scale the 
 		   specular component by 1-kd. 
-		
+
 		   While that is not a particularly realistic model of what 
 		   happens in reality, this will greatly simplify the 
 		   implementation. Please see the course staff if you're 
@@ -77,7 +77,6 @@ public:
 		.arg(m_kd.toString())
 		.arg(m_ks);
 	}
-
 private:
 	float m_alpha;
 	float m_intIOR, m_extIOR;

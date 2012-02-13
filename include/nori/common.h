@@ -63,16 +63,19 @@ template <typename Point>                  struct TBoundingBox;
    The following list of typedefs establishes some convenient aliases
    for specific types. */
 
-typedef TVector<float, 3>       Vector3f;
+typedef TVector<float, 1>       Vector1f;
 typedef TVector<float, 2>       Vector2f;
-typedef TVector<int, 3>         Vector3i;
+typedef TVector<float, 3>       Vector3f;
+typedef TVector<int, 1>         Vector1i;
 typedef TVector<int, 2>         Vector2i;
-typedef TPoint<float, 3>        Point3f;
-typedef TPoint<float, 2>        Point2f;
+typedef TVector<int, 3>         Vector3i;
 typedef TPoint<float, 1>        Point1f;
-typedef TPoint<int, 3>          Point3i;
+typedef TPoint<float, 2>        Point2f;
+typedef TPoint<float, 3>        Point3f;
+typedef TPoint<int, 1>          Point1i;
 typedef TPoint<int, 2>          Point2i;
-typedef TBoundingBox<Point2f>   BoundingBox1f;
+typedef TPoint<int, 3>          Point3i;
+typedef TBoundingBox<Point1f>   BoundingBox1f;
 typedef TBoundingBox<Point2f>   BoundingBox2f;
 typedef TBoundingBox<Point3f>   BoundingBox3f;
 typedef TRay<Point2f, Vector2f> Ray2f;

@@ -1,5 +1,6 @@
 #include <nori/object.h>
 #include <Eigen/Geometry>
+#include <Eigen/LU>
 
 NORI_NAMESPACE_BEGIN
 
@@ -38,6 +39,9 @@ Color3f Color3f::toLinearRGB() const {
 float Color3f::getLuminance() const {
 	return coeff(0) * 0.212671f + coeff(1) * 0.715160f + coeff(2) * 0.072169f;
 }
+
+Transform::Transform(const Eigen::Matrix4f &trafo) 
+	: m_trafo(trafo), m_inverse(trafo.inverse()) { }
 
 Vector3f squareToUniformSphere(const Point2f &sample) {
 	float z = 1.0f - 2.0f * sample.y();

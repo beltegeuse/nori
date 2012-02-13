@@ -1,13 +1,14 @@
 SOURCES += src/common.cpp \
 	src/object.cpp \
 	src/proplist.cpp \
-	src/transform.cpp \
 	src/diffuse.cpp \
 	src/microfacet.cpp \
 	src/scene.cpp \
 	src/random.cpp \
 	src/quad.cpp \
 	src/chi2test.cpp \
+	src/mesh.cpp \
+	src/obj.cpp \
 	src/ttest.cpp \
 	src/parser.cpp \
 	src/main.cpp

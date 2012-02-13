@@ -30,7 +30,7 @@ public:
 	ChiSquareTest(const PropertyList &propList) {
 		/* The null hypothesis will be rejected when the associated 
 		   p-value is below the significance level specified here. */
-		m_significanceLevel= propList.getFloat("significanceLevel", 0.01f);
+		m_significanceLevel = propList.getFloat("significanceLevel", 0.01f);
 
 		/* Number of cells along the latitudinal axis. The azimuthal
 		   resolution is twice this value. */
@@ -38,7 +38,7 @@ public:
 
 		/* Minimum expected bin frequency. The chi^2 test does not
 		   work reliably when the expected frequency in a cell is
-		   low (e.g. less than 5), because normality assumptionss
+		   low (e.g. less than 5), because normality assumptions
 		   break down in this case. Therefore, the implementation
 		   will merge such low-frequency cells when they fall below
 		   the threshold specified here. */

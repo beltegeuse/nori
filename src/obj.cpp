@@ -16,12 +16,19 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <nori/transform.h>
-#include <Eigen/LU>
+#include <nori/mesh.h>
 
 NORI_NAMESPACE_BEGIN
 
-Transform::Transform(const Eigen::Matrix4f &trafo) 
-	: m_trafo(trafo), m_inverse(trafo.inverse()) { }
+/**
+ * \brief Loader for Wavefront OBJ triangle meshes
+ */
+class WavefrontOBJ : public Mesh {
+public:
+	WavefrontOBJ(const PropertyList &propList) 
+		: Shape(shape) {
+	}
+};
 
+NORI_REGISTER_CLASS(WavefrontOBJ, "obj");
 NORI_NAMESPACE_END
