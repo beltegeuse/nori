@@ -18,6 +18,7 @@
 
 #include <nori/mesh.h>
 #include <nori/bbox.h>
+#include <Eigen/Geometry>
 
 #define NORI_TRICLIP_MAXVERTS 10
 
@@ -137,7 +138,6 @@ bool Mesh::rayIntersect(uint32_t index, const Ray3f &ray, float &u, float &v, fl
 
 	return true;
 }
-
 	
 BoundingBox3f Mesh::getBoundingBox(uint32_t index) const {
 	BoundingBox3f result(m_vertexPositions[m_indices[3*index]]);
@@ -146,6 +146,7 @@ BoundingBox3f Mesh::getBoundingBox(uint32_t index) const {
 	return result;
 }
 
+/// Internally used by getClippedBoundingBox()
 static int sutherlandHodgman(Point3d *input, int inCount, Point3d *output, int axis, 
 		double splitPos, bool isMinimum) {
 	if (inCount < 3)
@@ -161,28 +162,25 @@ static int sutherlandHodgman(Point3d *input, int inCount, Point3d *output, int a
 		int nextIdx = i+1;
 		if (nextIdx == inCount)
 			nextIdx = 0;
-		Point3d next = input[nextIdx];
+		const Point3d &next = input[nextIdx];
 		distance = sign * (next[axis] - splitPos);
 		bool nextIsInside = (distance >= 0);
 
 		if (curIsInside && nextIsInside) {
 			/* Both this and the next vertex are inside, add to the list */
-			if (outCount + 1 >= NORI_TRICLIP_MAXVERTS)
-				goto overflow;
+			assert(outCount + 1 < NORI_TRICLIP_MAXVERTS);
 			output[outCount++] = next;
 		} else if (curIsInside && !nextIsInside) {
 			/* Going outside -- add the intersection */
 			double t = (splitPos - cur[axis]) / (next[axis] - cur[axis]);
-			if (outCount + 1 >= NORI_TRICLIP_MAXVERTS)
-				goto overflow;
+			assert(outCount + 1 < NORI_TRICLIP_MAXVERTS);
 			Point3d p = cur + (next - cur) * t;
 			p[axis] = splitPos; // Avoid roundoff errors
 			output[outCount++] = p;
 		} else if (!curIsInside && nextIsInside) {
 			/* Coming back inside -- add the intersection + next vertex */
 			double t = (splitPos - cur[axis]) / (next[axis] - cur[axis]);
-			if (outCount + 2 >= NORI_TRICLIP_MAXVERTS)
-				goto overflow;
+			assert(outCount + 2 < NORI_TRICLIP_MAXVERTS);
 			Point3d p = cur + (next - cur) * t;
 			p[axis] = splitPos; // Avoid roundoff errors
 			output[outCount++] = p;
@@ -194,8 +192,6 @@ static int sutherlandHodgman(Point3d *input, int inCount, Point3d *output, int a
 		curIsInside = nextIsInside;
 	}
 	return outCount;
-overflow:
-	throw NoriException("Overflow in sutherlandHodgman()!");
 }
 
 BoundingBox3f Mesh::getClippedBoundingBox(uint32_t index, const BoundingBox3f &bbox) const {
@@ -217,32 +213,8 @@ BoundingBox3f Mesh::getClippedBoundingBox(uint32_t index, const BoundingBox3f &b
 	}
 
 	BoundingBox3f result;
-	for (int i=0; i<nVertices; ++i) {
-		for (int j=0; j<3; ++j) {
-			/* Now this is really paranoid! */
-			double pos_d = vertices1[i][j];
-			float pos_f = (float) pos_d;
-			float pos_roundedDown, pos_roundedUp;
-
-			if (pos_f < pos_d) {
-				/* float value is too small */
-				pos_roundedDown = pos_f;
-				pos_roundedUp = nextafterf(pos_f, 
-					std::numeric_limits<float>::infinity());
-			} else if (pos_f > pos_d) {
-				/* float value is too large */
-				pos_roundedUp = pos_f;
-				pos_roundedDown = nextafterf(pos_f, 
-					-std::numeric_limits<float>::infinity());
-			} else {
-				/* Double value is exactly representable */
-				pos_roundedDown = pos_roundedUp = pos_f;
-			}
-
-			result.min[j] = std::min(result.min[j], pos_roundedDown);
-			result.max[j] = std::max(result.max[j], pos_roundedUp);
-		}
-	}
+	for (int i=0; i<nVertices; ++i) 
+		result.expandBy(vertices1[i].cast<float>());
 	result.clip(bbox);
 	return result;
 }

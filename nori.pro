@@ -7,9 +7,10 @@ SOURCES += src/common.cpp \
 	src/random.cpp \
 	src/quad.cpp \
 	src/chi2test.cpp \
+	src/ttest.cpp \
 	src/mesh.cpp \
 	src/obj.cpp \
-	src/ttest.cpp \
+	src/bitmap.cpp \
 	src/parser.cpp \
 	src/main.cpp
 
@@ -28,6 +29,8 @@ QT += xml xmlpatterns opengl
 
 macx | unix {
 	QMAKE_CXXFLAGS += -O3 -march=nocona -msse2 -mfpmath=sse -fstrict-aliasing
+	INCLUDEPATH += /usr/include/OpenEXR
+	LIBS += -lIlmImf
 }
 
 win32 {
