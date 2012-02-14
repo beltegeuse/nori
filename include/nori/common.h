@@ -169,6 +169,12 @@ Point2f sphericalCoordinates(const Vector3f &dir);
 	}
 #endif
 
+/// Allocate an aligned region of memory
+extern void * __restrict allocAligned(size_t size);
+
+/// Free an aligned region of memory
+extern void freeAligned(void *ptr);
+
 NORI_NAMESPACE_END
 
 #endif /* __COMMON_H */

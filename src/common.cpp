@@ -148,4 +148,24 @@ void coordinateSystem(const Vector3f &a, Vector3f &b, Vector3f &c) {
 	b = c.cross(a);
 }
 
+void * __restrict allocAligned(size_t size) {
+#if defined(Q_WS_WIN)
+	return _aligned_malloc(size, L1_CACHE_LINE_SIZE);
+#elif defined(Q_WS_MACX)
+	/* OSX malloc already returns 16-byte aligned data suitable
+	   for AltiVec and SSE computations */
+	return malloc(size);
+#else
+	return memalign(L1_CACHE_LINE_SIZE, size);
+#endif
+}
+
+void freeAligned(void *ptr) {
+#if defined(Q_WS_WIN)
+	_aligned_free(ptr);
+#else
+	free(ptr);
+#endif
+}
+
 NORI_NAMESPACE_END
