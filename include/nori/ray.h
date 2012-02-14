@@ -19,7 +19,7 @@
 #if !defined(__RAY_H)
 #define __RAY_H
 
-#include <nori/common.h>
+#include <nori/vector.h>
 
 NORI_NAMESPACE_BEGIN
 
@@ -74,12 +74,12 @@ template <typename _PointType, typename _VectorType> struct TRay {
 		return QString(
 				"Ray[\n"
 				"  o = %1,\n"
-				"  r = %2,\n"
+				"  d = %2,\n"
 				"  mint = %3,\n"
 				"  maxt = %4\n"
 				"]")
 			.arg(o.toString())
-			.arg(r.toString())
+			.arg(d.toString())
 			.arg(mint)
 			.arg(maxt);
 	}

@@ -27,7 +27,7 @@ DESTDIR = .
 QT += xml xmlpatterns opengl
 
 macx | unix {
-	QMAKE_CXXFLAGS += -O3 -march=nocona -msse2 -mfpmath=sse
+	QMAKE_CXXFLAGS += -O3 -march=nocona -msse2 -mfpmath=sse -fstrict-aliasing
 }
 
 win32 {

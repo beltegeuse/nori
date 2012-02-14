@@ -38,6 +38,8 @@ public:
 		if (!input.open(QIODevice::ReadOnly | QIODevice::Text))
 			throw NoriException(QString("Cannot open \"%1\"").arg(filename));
 
+		Transform trafo = propList.getTransform("toWorld", Transform());
+
 		cout << "Loading \"" << qPrintable(filename) << "\" .." << endl;
 
 		QTextStream stream(&input);
@@ -58,6 +60,7 @@ public:
 			if (prefix == "v") {
 				Point3f p;
 				line >> p.x() >> p.y() >> p.z();
+				p = trafo * p;
 				positions.push_back(p);
 			} else if (prefix == "vt") {
 				Point2f tc;
@@ -66,6 +69,7 @@ public:
 			} else if (prefix == "vn") {
 				Normal3f n;
 				line >> n.x() >> n.y() >> n.z();
+				n = (trafo * n).normalized();
 				normals.push_back(n);
 			} else if (prefix == "f") {
 				QString v1, v2, v3, v4;
@@ -162,7 +166,7 @@ protected:
 			throw NoriException(QString("Could not parse vertex data: '%1'!").arg(string));
 		}
 
-		inline const bool operator==(const OBJVertex &v) const {
+		inline bool operator==(const OBJVertex &v) const {
 			return v.p == p && v.n == n && v.uv == uv;
 		}
 	};

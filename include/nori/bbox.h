@@ -21,7 +21,7 @@
 
 #include <nori/ray.h>
 
-MTS_NAMESPACE_BEGIN
+NORI_NAMESPACE_BEGIN
 
 /**
  * \brief Generic n-dimensional bounding box data structure
@@ -84,11 +84,11 @@ template <typename _PointType> struct TBoundingBox {
 	}
 
 	/// Calculate the n-1 dimensional volume of the boundary
-	inline Float getSurfaceArea() const {
+	inline float getSurfaceArea() const {
 		VectorType d = max - min;
-		Float result = 0.0f;
+		float result = 0.0f;
 		for (int i=0; i<Dimension; ++i) {
-			Float term = 1.0f;
+			float term = 1.0f;
 			for (int j=0; j<Dimension; ++j) {
 				if (i == j)
 					continue;
@@ -307,12 +307,12 @@ template <typename _PointType> struct TBoundingBox {
 	/// Return a string representation of the bounding box
 	inline QString toString() const {
 		QString result("BoundingBox[");
-		if (!bbox.isValid())
+		if (!isValid())
 			result += "invalid";
 		else
 			result += QString("min=%1, max=%2")
-				.arg(bbox.min.toString())
-				.arg(bbox.max.toString());
+				.arg(min.toString())
+				.arg(max.toString());
 		return result + "]";
 	}
 

@@ -2,6 +2,14 @@
 #include <Eigen/Geometry>
 #include <Eigen/LU>
 
+#if defined(__linux__)
+#include <malloc.h>
+#endif
+
+#if !defined(L1_CACHE_LINE_SIZE)
+#define L1_CACHE_LINE_SIZE 64
+#endif
+
 NORI_NAMESPACE_BEGIN
 
 Color3f Color3f::toSRGB() const {
@@ -41,7 +49,7 @@ float Color3f::getLuminance() const {
 }
 
 Transform::Transform(const Eigen::Matrix4f &trafo) 
-	: m_trafo(trafo), m_inverse(trafo.inverse()) { }
+	: m_transform(trafo), m_inverse(trafo.inverse()) { }
 
 Vector3f squareToUniformSphere(const Point2f &sample) {
 	float z = 1.0f - 2.0f * sample.y();
@@ -148,7 +156,7 @@ void coordinateSystem(const Vector3f &a, Vector3f &b, Vector3f &c) {
 	b = c.cross(a);
 }
 
-void * __restrict allocAligned(size_t size) {
+void *allocAligned(size_t size) {
 #if defined(Q_WS_WIN)
 	return _aligned_malloc(size, L1_CACHE_LINE_SIZE);
 #elif defined(Q_WS_MACX)

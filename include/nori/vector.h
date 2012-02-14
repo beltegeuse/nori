@@ -54,6 +54,9 @@ public:
 	/// Create a new 3D vector (type error if \c Dimension != 3)
 	inline TVector(Scalar x, Scalar y, Scalar z) : Base(x, y, z) { }
 
+	/// Create a new 4D vector (type error if \c Dimension != 4)
+	inline TVector(Scalar x, Scalar y, Scalar z, Scalar w) : Base(x, y, z, w) { }
+
 	/// Construct a vector from MatrixBase (needed to play nice with Eigen)
 	template <typename Derived> inline TVector(const Eigen::MatrixBase<Derived>& p) 
 		: Base(p) { }
@@ -98,6 +101,9 @@ public:
 	
 	/// Create a new 3D point (type error if \c Dimension != 3)
 	inline TPoint(Scalar x, Scalar y, Scalar z) : Base(x, y, z) { }
+
+	/// Create a new 4D point (type error if \c Dimension != 4)
+	inline TPoint(Scalar x, Scalar y, Scalar z, Scalar w) : Base(x, y, z, w) { }
 
 	/// Construct a point from MatrixBase (needed to play nice with Eigen)
 	template <typename Derived> inline TPoint(const Eigen::MatrixBase<Derived>& p) 
