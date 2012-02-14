@@ -60,6 +60,9 @@ public:
 	 * */
 	EClassType getClassType() const { return EMesh; }
 protected:
+	/// Create an empty mesh
+	Mesh();
+protected:
 	Point3f  *m_vertexPositions;
 	Normal3f *m_vertexNormals;
 	Point2f  *m_vertexTexCoords;

@@ -20,13 +20,16 @@
 
 NORI_NAMESPACE_BEGIN
 
+Mesh::Mesh() : m_vertexPositions(0), m_vertexNormals(0),
+  m_vertexTexCoords(0), m_indices(0), m_vertexCount(0),
+  m_triangleCount(0) { }
+
 Mesh::~Mesh() {
-	if (m_vertexTexCoords)
-		delete[] m_vertexTexCoords;
+	delete[] m_vertexPositions;
 	if (m_vertexNormals)
 		delete[] m_vertexNormals;
-
-	delete[] m_vertexPositions;
+	if (m_vertexTexCoords)
+		delete[] m_vertexTexCoords;
 	delete[] m_indices;
 }
 

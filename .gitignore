@@ -1,3 +1,4 @@
-./build
-./nori
-./Makefile
+/build
+/nori
+/include/boost
+/Makefile
