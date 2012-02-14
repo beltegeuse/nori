@@ -18,6 +18,7 @@
 
 #include <nori/mesh.h>
 #include <nori/bbox.h>
+#include <nori/bsdf.h>
 #include <Eigen/Geometry>
 
 #define NORI_TRICLIP_MAXVERTS 10
@@ -26,7 +27,7 @@ NORI_NAMESPACE_BEGIN
 
 Mesh::Mesh() : m_vertexPositions(0), m_vertexNormals(0),
   m_vertexTexCoords(0), m_indices(0), m_vertexCount(0),
-  m_triangleCount(0) { }
+  m_triangleCount(0), m_bsdf(NULL) { }
 
 Mesh::~Mesh() {
 	delete[] m_vertexPositions;
@@ -35,6 +36,8 @@ Mesh::~Mesh() {
 	if (m_vertexTexCoords)
 		delete[] m_vertexTexCoords;
 	delete[] m_indices;
+	if (m_bsdf)
+		delete m_bsdf;
 }
 
 void Mesh::activate() {
@@ -46,6 +49,11 @@ void Mesh::activate() {
 	for (uint32_t i=0; i<m_triangleCount; ++i)
 		m_distr.append(surfaceArea(i));
 	m_distr.normalize();
+
+
+	/* If no material was assigned, instantiate a diffuse BRDF */
+	m_bsdf = static_cast<BSDF *>(
+		NoriObjectFactory::createInstance("diffuse", PropertyList()));
 }
 
 void Mesh::samplePosition(const Point2f &_sample, Point3f &p, Normal3f &n) const {
@@ -219,6 +227,19 @@ BoundingBox3f Mesh::getClippedBoundingBox(uint32_t index, const BoundingBox3f &b
 	return result;
 }
 
+void Mesh::addChild(NoriObject *obj) {
+	switch (obj->getClassType()) {
+		case EBSDF:
+			if (m_bsdf)
+				throw NoriException("Mesh: tried to register multiple BSDF instances!");
+			m_bsdf = static_cast<BSDF *>(obj);
+			break;
+
+		default:
+			throw NoriException(QString("Mesh::addChild(<%1>) is not supported!").arg(
+				classTypeName(obj->getClassType())));
+	}
+}
 
 QString Mesh::toString() const {
 	return QString(

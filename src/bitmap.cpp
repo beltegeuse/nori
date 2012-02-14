@@ -32,12 +32,12 @@ Bitmap::Bitmap(const QString &filename) {
 	const Imf::Header &header = file.header();
 	const Imf::ChannelList &channels = header.channels();
 
-	cout << "Reading a " << rows() << "x" << cols() 
-		 << " OpenEXR file from \"" << qPrintable(filename) << "\"" << endl;
-	
 	Imath::Box2i dw = file.header().dataWindow();
 	resize(dw.max.x - dw.min.x + 1, dw.max.y - dw.min.y + 1);
 
+	cout << "Reading a " << rows() << "x" << cols() 
+		 << " OpenEXR file from \"" << qPrintable(filename) << "\"" << endl;
+	
 	const char *ch_r = NULL, *ch_g = NULL, *ch_b = NULL;
 	for (Imf::ChannelList::ConstIterator it = channels.begin(); it != channels.end(); ++it) {
 		QString name = QString(it.name()).toLower();

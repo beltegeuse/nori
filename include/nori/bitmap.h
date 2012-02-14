@@ -25,9 +25,11 @@
 NORI_NAMESPACE_BEGIN
 
 /**
- * Stores a high dynamic-range bitmap
+ * \brief Stores a RGB high dynamic-range bitmap
+ *
+ * The bitmap class provides I/O support using the OpenEXR file format
  */
-class Bitmap : Eigen::Array<Color3f, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> {
+class Bitmap : public Eigen::Array<Color3f, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> {
 public:
 	typedef Eigen::Array<Color3f, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> Base;
 

@@ -36,9 +36,10 @@ struct Intersection {
 /**
  * \brief Triangle mesh
  *
- * This class represents a triangle mesh object. Subclasses
- * implement the specifics of how to create its contents (e.g. 
- * by loading from an external file)
+ * This class stores a triangle mesh object and provides numerous functions
+ * for querying the individual triangles. Subclasses of \c Mesh implement 
+ * the specifics of how to create its contents (e.g. by loading from an 
+ * external file)
  */
 class Mesh : public NoriObject {
 public:
@@ -83,11 +84,21 @@ public:
 	/** \brief Ray-triangle intersection test
 	 * 
 	 * Uses the algorithm presented by Moeller and Trumbore at
-	 * http://www.acm.org/jgt/papers/MollerTrumbore97/code.html
-	 * Returns true if an intersection has been detected
-	 * On success, \a t contains the distance from the ray origin to the
-	 * intersection point, and \a u and \a v contain the intersection point in
-	 * the local triangle coordinate system
+	 * <tt>http://www.acm.org/jgt/papers/MollerTrumbore97/code.html</tt>.
+	 *
+	 * \param index
+	 *    Index of the triangle that should be intersected
+	 * \param t
+	 *    Upon success, \a t contains the distance from the ray origin to the
+	 *    intersection point,
+	 * \param u
+	 *   Upon success, \c u will contain the 'U' component of the intersection
+	 *   in barycentric coordinates
+	 * \param u
+	 *   Upon success, \c v will contain the 'V' component of the intersection
+	 *   in barycentric coordinates
+	 * \return
+	 *   \c true if an intersection has been detected
 	 */
 	bool rayIntersect(uint32_t index, const Ray3f &ray, float &u, float &v, float &t) const;
 
@@ -102,6 +113,9 @@ public:
 
 	/// Return a pointer to the texture coordinates (or \c NULL if there are none)
 	inline const Point2f *getVertexTexCoords() const { return m_vertexTexCoords; }
+
+	/// Register a child object (e.g. a BSDF) with the mesh
+	virtual void addChild(NoriObject *child);
 
 	/// Return a human-readable summary of this instance
 	QString toString() const;
@@ -122,6 +136,7 @@ protected:
 	uint32_t m_vertexCount;
 	uint32_t m_triangleCount;
 	DiscretePDF m_distr;
+	BSDF    *m_bsdf;
 };
 
 NORI_NAMESPACE_END

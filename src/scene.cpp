@@ -17,6 +17,7 @@
 */
 
 #include <nori/scene.h>
+#include <nori/bitmap.h>
 
 NORI_NAMESPACE_BEGIN
 
@@ -30,6 +31,13 @@ Scene::~Scene() {
 
 void Scene::activate() {
 	cout << "activating scene" << endl;
+
+	Bitmap b(Vector2i(128, 128));
+	b.setConstant(Color3f(0.2, 0.4, 0.3));
+	b.save("out.exr");
+
+	Bitmap b2("out.exr");
+	cout << qPrintable(b2(3,4).toString()) << endl;
 }
 
 void Scene::addChild(NoriObject *obj) {

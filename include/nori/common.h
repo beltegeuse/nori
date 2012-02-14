@@ -93,6 +93,14 @@ typedef TBoundingBox<Point4f>   BoundingBox4f;
 typedef TRay<Point2f, Vector2f> Ray2f;
 typedef TRay<Point3f, Vector3f> Ray3f;
 
+/// Some more forward declarations
+class NoriObject;
+class NoriObjectFactory;
+class Mesh;
+class BSDF;
+class Camera;
+class Luminaire;
+
 /// Import cout, cerr, endl for debugging purposes
 using std::cout;
 using std::cerr;
