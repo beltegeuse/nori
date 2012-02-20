@@ -1,7 +1,7 @@
 /*
-    This class contains a generic implementation of a KD-Tree for
-	shapes in $n$ dimensions. It was originally part of Mitsuba
-	and slightly adapted for use in Nori.
+    This class contains a generic implementation of a KD-Tree for shapes in 
+	n dimensions. It was originally part of Mitsuba and slightly adapted for
+	use in Nori.
 
     Copyright (c) 2007-2012 by Wenzel Jakob
 
@@ -21,11 +21,15 @@
 #if !defined(__KDTREE_GENERIC_H)
 #define __KDTREE_GENERIC_H
 
-#include <nori/common.h>
+#include <nori/bbox.h>
 #include <boost/static_assert.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <stack>
 #include <QElapsedTimer>
+#include <QWaitCondition>
+#include <QMutex>
+#include <QThread>
+#include <stack>
+#include <map>
 
 /** Compile-time KD-tree depth limit. Allows to put certain
     data structures on the stack */
@@ -330,7 +334,7 @@ private:
  */
 class ClassificationStorage {
 public:
-	ClassificationStorage(size_t size = 0) 
+	ClassificationStorage() 
 		: m_buffer(NULL), m_bufferSize(0) { }
 
 	~ClassificationStorage() {
@@ -375,7 +379,7 @@ private:
  * This class defines the byte layout for KD-tree nodes and
  * provides methods for querying the tree structure.
  */
-template <typename BoundingBoxType> class KDTreeBase : public Object {
+template <typename BoundingBoxType> class KDTreeBase {
 public:
 	/// Index number format (max 2^32 prims)
 	typedef uint32_t IndexType;
@@ -537,10 +541,6 @@ public:
 	
 	/// Return a tight axis-aligned bounding box containing all primitives
 	inline const BoundingBoxType &getTightBoundingBox() const { return m_tightBBox;}
-
-	NORI_DECLARE_CLASS()
-protected:
-	virtual ~KDTreeBase() { }
 protected:
 	KDNode *m_nodes;
 	BoundingBoxType m_bbox, m_tightBBox;
@@ -644,7 +644,7 @@ public:
 		m_traversalCost = 15;
 		m_queryCost = 20;
 		m_emptySpaceBonus = 0.9f;
-		m_clip = true;
+		m_clip = false;
 		m_stopPrims = 6;
 		m_maxBadRefines = 3;
 		m_exactPrimThreshold = 65536;
@@ -870,13 +870,15 @@ protected:
 
 		/* Establish an ad-hoc depth cutoff value (Formula from PBRT) */
 		if (m_maxDepth == 0)
-			m_maxDepth = (int) (8 + 1.3f * log2i(primCount));
+			m_maxDepth = (int) (8 + 1.3f * std::log(primCount)/std::log(2));
 		m_maxDepth = std::min(m_maxDepth, (SizeType) NORI_KD_MAXDEPTH);
 
 		OrderedChunkAllocator &leftAlloc = ctx.leftAlloc;
 		IndexType *indices = leftAlloc.allocate<IndexType>(primCount);
 
 		QElapsedTimer timer;
+		timer.start();
+
 		BoundingBoxType &bbox = m_bbox;
 		bbox.reset();
 		for (IndexType i=0; i<primCount; ++i) {
@@ -884,27 +886,20 @@ protected:
 			indices[i] = i;
 		}
 
-		KDLog(EDebug, "kd-tree configuration:");
-		KDLog(EDebug, "   Traversal cost           : %.2f", m_traversalCost);
-		KDLog(EDebug, "   Query cost               : %.2f", m_queryCost);
-		KDLog(EDebug, "   Empty space bonus        : %.2f", m_emptySpaceBonus);
-		KDLog(EDebug, "   Max. tree depth          : %i", m_maxDepth);
-		KDLog(EDebug, "   Scene bounding box (min) : %s", 
-				bbox.min.toString().c_str());
-		KDLog(EDebug, "   Scene bounding box (max) : %s", 
-				bbox.max.toString().c_str());
-		KDLog(EDebug, "   Min-max bins             : %i", m_minMaxBins);
-		KDLog(EDebug, "   O(n log n) method        : use for <= %i primitives", 
-				m_exactPrimThreshold);
-		KDLog(EDebug, "   Perfect splits           : %s", m_clip ? "yes" : "no");
-		KDLog(EDebug, "   Retract bad splits       : %s", 
-				m_retract ? "yes" : "no");
-		KDLog(EDebug, "   Stopping primitive count : %i", m_stopPrims);
-		KDLog(EDebug, "   Build tree in parallel   : %s", 
-				m_parallelBuild ? "yes" : "no");
-		KDLog(EDebug, "");
+		cout << "kd-tree configuration" << endl
+			 << "  Traversal cost           : " << m_traversalCost << endl
+			 << "  Query cost               : " << m_queryCost << endl
+			 << "  Empty space bonus        : " << m_emptySpaceBonus << endl
+			 << "  Max. tree depth          : " << m_maxDepth << endl
+			 << "  Scene bouning box        : " << qPrintable(bbox.toString()) << endl
+			 << "  Min-max bins             : " << m_minMaxBins << endl
+			 << "  O(n log n method)        : use for " << m_exactPrimThreshold << " primitives" << endl
+			 << "  Perfect splits           : " << m_clip << endl
+			 << "  Retract bad splits       : " << m_retract << endl
+			 << "  Stopping primitive count : " << m_stopPrims << endl
+			 << "  Build tree in parallel   : " << m_parallelBuild << endl;
 
-		SizeType procCount = getProcessorCount();
+		SizeType procCount = getCoreCount();
 		if (procCount == 1)
 			m_parallelBuild = false;
 
@@ -912,12 +907,10 @@ protected:
 			m_builders.resize(procCount);
 			for (SizeType i=0; i<procCount; ++i) {
 				m_builders[i] = new TreeBuilder(i, this);
-				m_builders[i]->incRef();
 				m_builders[i]->start();
 			}
 		}
 
-		m_indirectionLock = new Mutex();
 		KDNode *prelimRoot = ctx.nodes.allocate(1);
 		buildTreeMinMax(ctx, 1, prelimRoot, bbox, bbox, 
 				indices, primCount, true, 0);
@@ -926,13 +919,11 @@ protected:
 		if (m_parallelBuild) {
 			m_interface.mutex.lock();
 			m_interface.done = true;
-			m_interface.cond->broadcast();
+			m_interface.cond.wakeAll();
 			m_interface.mutex.unlock();
 			for (SizeType i=0; i<m_builders.size(); ++i) 
-				m_builders[i]->join();
+				m_builders[i]->wait();
 		}
-
-		cout << " Finished -- took " << timer.elapsed() << " ms" << endl;
 
 		size_t totalUsage = m_indirections.capacity() 
 			* sizeof(KDNode *) + ctx.size();
@@ -947,12 +938,7 @@ protected:
 			subCtx.rightAlloc.cleanup();
 			ctx.accumulateStatisticsFrom(subCtx);
 		}
-		KDLog(EDebug, "   Total: %s", memString(totalUsage).c_str());
-
-		KDLog(EDebug, "");
-		timer.restart();
-		KDLog(EDebug, "Optimizing memory layout ..");
-
+		
 		std::stack<boost::tuple<const KDNode *, KDNode *, 
 				const BuildContext *, BoundingBoxType> > stack;
 
@@ -975,8 +961,8 @@ protected:
 		m_indices = new IndexType[m_indexCount];
 
 		/* The following code rewrites all tree nodes with proper relative 
-		 * indices. It also computes the final tree cost and some other
-		 * useful heuristics */
+		   indices. It also computes the final tree cost and some other
+		   useful heuristics */
 		stack.push(boost::make_tuple(prelimRoot, &m_nodes[nodePtr++], 
 					&ctx, bbox));
 		while (!stack.empty()) {
@@ -1041,8 +1027,6 @@ protected:
 			}
 		}
 
-		KDLog(EDebug, "Finished -- took %i ms.", timer.elapsed());
-
 		/* Free some more memory */
 		ctx.nodes.clear();
 		ctx.indices.clear();
@@ -1051,16 +1035,13 @@ protected:
 			subCtx.nodes.clear();
 			subCtx.indices.clear();
 		}
-		m_indirectionLock = NULL;
 		std::vector<KDNode *>().swap(m_indirections);
 
 		if (m_builders.size() > 0) {
 			for (SizeType i=0; i<m_builders.size(); ++i)
-				m_builders[i]->decRef();
+				delete m_builders[i];
 			m_builders.clear();
 		}
-
-		KDLog(EDebug, "");
 
 		float rootQuantity = TreeConstructionHeuristic::getQuantity(bbox);
 		expTraversalSteps /= rootQuantity;
@@ -1077,42 +1058,28 @@ protected:
 		bbox.min -= (bbox.max-bbox.min) * eps + VectorType(eps);
 		bbox.max += (bbox.max-bbox.min) * eps + VectorType(eps);
 
-		KDLog(EDebug, "Structural kd-tree statistics:");
-		KDLog(EDebug, "   Parallel work units         : " SIZE_T_FMT, 
-				m_interface.threadMap.size());
-		KDLog(EDebug, "   Node storage cost           : %s", 
-				memString(nodePtr * sizeof(KDNode)).c_str());
-		KDLog(EDebug, "   Index storage cost          : %s", 
-				memString(indexPtr * sizeof(IndexType)).c_str());
-		KDLog(EDebug, "   Inner nodes                 : %i", ctx.innerNodeCount);
-		KDLog(EDebug, "   Leaf nodes                  : %i", ctx.leafNodeCount);
-		KDLog(EDebug, "   Nonempty leaf nodes         : %i", 
-				ctx.nonemptyLeafNodeCount);
-		std::ostringstream oss;
-		oss << "   Leaf node histogram         : ";
-		for (SizeType i=0; i<primBucketCount; i++) {
-			oss << i << "(" << primBuckets[i] << ") ";
-			if ((i+1)%4==0 && i+1<primBucketCount) {
-				KDLog(EDebug, "%s", oss.str().c_str());
-				oss.str("");
-				oss << "                                 ";
-			}
-		}
-		KDLog(EDebug, "%s", oss.str().c_str());
-		KDLog(EDebug, "");
-		KDLog(EDebug, "Qualitative kd-tree statistics:");
-		KDLog(EDebug, "   Retracted splits            : %i", ctx.retractedSplits);
-		KDLog(EDebug, "   Pruned primitives           : %i", ctx.pruned);
-		KDLog(EDebug, "   Largest leaf node           : %i primitives",
-				maxPrimsInLeaf);
-		KDLog(EDebug, "   Avg. prims/nonempty leaf    : %.2f", 
-				ctx.primIndexCount / (float) ctx.nonemptyLeafNodeCount);
-		KDLog(EDebug, "   Expected traversals/query   : %.2f", expTraversalSteps);
-		KDLog(EDebug, "   Expected leaf visits/query  : %.2f", expLeavesVisited);
-		KDLog(EDebug, "   Expected prim. visits/query : %.2f", 
-				expPrimitivesIntersected);
-		KDLog(EDebug, "   Final cost                  : %.2f", heuristicCost);
-		KDLog(EDebug, "");
+		cout << "Structural kd-tree statistics" << endl
+			 << "  Parallel work units         : " << m_interface.threadMap.size() << endl
+			 << "  Node storage cost           : " << (nodePtr * sizeof(KDNode)) / 1024 << " KiB" << endl
+			 << "  Index storage cost          : " << (indexPtr * sizeof(IndexType)) / 1024 << " KiB" << endl
+			 << "  Inner nodes                 : " << ctx.innerNodeCount << endl
+			 << "  Leaf nodes                  : " << ctx.leafNodeCount << endl
+			 << "  Nonempty leaf nodes         : " << ctx.nonemptyLeafNodeCount << endl;
+		
+		cout << "Qualitative kd-tree statistics" << endl
+			 << "  Retracted splits            : " << ctx.retractedSplits << endl
+			 << "  Pruned primitives           : " << ctx.pruned << endl
+			 << "  Largest leaf node           : " << maxPrimsInLeaf << endl
+			 << "  Avg. prims / nonempty leaf  : " << ctx.primIndexCount / (float) ctx.nonemptyLeafNodeCount << endl
+			 << "  Expected traversals/query   : " << expTraversalSteps << endl
+			 << "  Expected leaf visits/query  : " << expLeavesVisited << endl
+			 << "  Expected prim. visits/query : " << expPrimitivesIntersected << endl
+			 << "  Final cost                  : " << heuristicCost << endl;
+
+		cout << "Finished after " << timer.elapsed() << " ms (used "  
+			<< totalUsage/1024 << " KiB of temp. memory)" << endl 
+			<< "The final kd-tree requires " << (nodePtr*sizeof(KDNode) + 
+			indexPtr * sizeof(IndexType)) / 1024 << " KiB of memory" << endl;
 	}
 
 protected:
@@ -1206,7 +1173,7 @@ protected:
 		SizeType pruned;
 
 		BuildContext(SizeType primCount, SizeType binCount)
-			: classStorage(primCount), minMaxBins(binCount) {
+			: minMaxBins(binCount) {
 			classStorage.setPrimitiveCount(primCount);
 			leafNodeCount = 0;
 			nonemptyLeafNodeCount = 0;
@@ -1269,7 +1236,6 @@ protected:
 			m_context(parent->cast()->getPrimitiveCount(),
 					  parent->getMinMaxBins()),
 			m_interface(parent->m_interface) {
-			setCritical(true);
 		}
 
 		void run() {
@@ -1334,7 +1300,7 @@ protected:
 	boost::tuple<EdgeEvent *, EdgeEvent *, SizeType> createEventList(
 			OrderedChunkAllocator &alloc, const BoundingBoxType &nodeBoundingBox, 
 			IndexType *prims, SizeType primCount) {
-		SizeType initialSize = primCount * 2 * PointType::dim, actualPrimCount = 0;
+		SizeType initialSize = primCount * 2 * PointType::Dimension, actualPrimCount = 0;
 		EdgeEvent *eventStart = alloc.allocate<EdgeEvent>(initialSize);
 		EdgeEvent *eventEnd = eventStart;
 
@@ -1349,7 +1315,7 @@ protected:
 				bbox = cast()->getBoundingBox(index);
 			}
 
-			for (int axis=0; axis<PointType::dim; ++axis) {
+			for (int axis=0; axis<PointType::Dimension; ++axis) {
 				float min = (float) bbox.min[axis], max = (float) bbox.max[axis];
 
 				if (min == max) {
@@ -1608,9 +1574,7 @@ protected:
 			   become inconsistent. The two ways to proceed at this point are to
 			   either create a leaf (bad) or switch over to the O(n log n) greedy 
 			   optimization, which is done below */
-			KDLog(EWarn, "Min-max binning was unable to split %i primitives with %s "
-				"-- retrying with the O(n log n) greedy optimization",
-				primCount, tightBBox.toString().c_str());
+			cout << "Min-max binning failed. Retrying with the O(n log n) greedy algorithm." << endl;
 			return transitionToNLogN(ctx, depth, node, nodeBoundingBox, indices,
 				primCount, isLeftChild, badRefines);
 		}
@@ -1757,15 +1721,15 @@ protected:
 
 		/* Initially, the split plane is placed left of the scene
 		   and thus all geometry is on its right side */
-		SizeType numLeft[PointType::dim],
-				  numRight[PointType::dim];
+		SizeType numLeft[PointType::Dimension],
+				  numRight[PointType::Dimension];
 	
-		for (int i=0; i<PointType::dim; ++i) {
+		for (int i=0; i<PointType::Dimension; ++i) {
 			numLeft[i] = 0;
 			numRight[i] = primCount;
 		}
 
-		EdgeEvent *eventsByAxis[PointType::dim];
+		EdgeEvent *eventsByAxis[PointType::Dimension];
 		int eventsByAxisCtr = 1;
 		eventsByAxis[0] = eventStart;
 		TreeConstructionHeuristic tch(nodeBoundingBox);
@@ -1935,9 +1899,9 @@ protected:
 		EdgeEvent *leftEventsStart, *rightEventsStart;
 		if (isLeftChild) {
 			leftEventsStart = eventStart;
-			rightEventsStart = rightAlloc.allocate<EdgeEvent>(bestSplit.numRight * 2 * PointType::dim);
+			rightEventsStart = rightAlloc.allocate<EdgeEvent>(bestSplit.numRight * 2 * PointType::Dimension);
 		} else {
-			leftEventsStart = leftAlloc.allocate<EdgeEvent>(bestSplit.numLeft * 2 * PointType::dim);
+			leftEventsStart = leftAlloc.allocate<EdgeEvent>(bestSplit.numLeft * 2 * PointType::Dimension);
 			rightEventsStart = eventStart;
 		}
 
@@ -1955,10 +1919,10 @@ protected:
 
 		if (m_clip) {
 			EdgeEvent
-			  *leftEventsTempStart = leftAlloc.allocate<EdgeEvent>(primsLeft * 2 * PointType::dim),
-			  *rightEventsTempStart = rightAlloc.allocate<EdgeEvent>(primsRight * 2 * PointType::dim),
-			  *newEventsLeftStart = leftAlloc.allocate<EdgeEvent>(primsBoth * 2 * PointType::dim),
-			  *newEventsRightStart = rightAlloc.allocate<EdgeEvent>(primsBoth * 2 * PointType::dim);
+			  *leftEventsTempStart = leftAlloc.allocate<EdgeEvent>(primsLeft * 2 * PointType::Dimension),
+			  *rightEventsTempStart = rightAlloc.allocate<EdgeEvent>(primsRight * 2 * PointType::Dimension),
+			  *newEventsLeftStart = leftAlloc.allocate<EdgeEvent>(primsBoth * 2 * PointType::Dimension),
+			  *newEventsRightStart = rightAlloc.allocate<EdgeEvent>(primsBoth * 2 * PointType::Dimension);
 
 			EdgeEvent *leftEventsTempEnd = leftEventsTempStart, 
 					*rightEventsTempEnd = rightEventsTempStart,
@@ -1983,7 +1947,7 @@ protected:
 					BoundingBoxType clippedRight = cast()->getClippedBoundingBox(index, rightNodeBoundingBox);
 
 					if (clippedLeft.isValid() && clippedLeft.getSurfaceArea() > 0) {
-						for (int axis=0; axis<PointType::dim; ++axis) {
+						for (int axis=0; axis<PointType::Dimension; ++axis) {
 							float min = (float) clippedLeft.min[axis],
 								  max = (float) clippedLeft.max[axis];
 
@@ -2005,7 +1969,7 @@ protected:
 					}
 
 					if (clippedRight.isValid() && clippedRight.getSurfaceArea() > 0) {
-						for (int axis=0; axis<PointType::dim; ++axis) {
+						for (int axis=0; axis<PointType::Dimension; ++axis) {
 							float min = (float) clippedRight.min[axis],
 								  max = (float) clippedRight.max[axis];
 
@@ -2156,8 +2120,8 @@ protected:
 	 */
 	struct MinMaxBins {
 		MinMaxBins(SizeType nBins) : m_binCount(nBins) {
-			m_minBins = new SizeType[m_binCount*PointType::dim];
-			m_maxBins = new SizeType[m_binCount*PointType::dim];
+			m_minBins = new SizeType[m_binCount*PointType::Dimension];
+			m_maxBins = new SizeType[m_binCount*PointType::Dimension];
 		}
 
 		~MinMaxBins() {
@@ -2171,7 +2135,7 @@ protected:
 		void setBoundingBox(const BoundingBoxType &bbox) {
 			m_bbox = bbox;
 			m_binSize = m_bbox.getExtents() / (float) m_binCount;
-			for (int axis=0; axis<PointType::dim; ++axis) 
+			for (int axis=0; axis<PointType::Dimension; ++axis) 
 				m_invBinSize[axis] = 1/m_binSize[axis];
 		}
 
@@ -2186,13 +2150,13 @@ protected:
 		void bin(const Derived *derived, IndexType *indices, 
 				SizeType primCount) {
 			m_primCount = primCount;
-			memset(m_minBins, 0, sizeof(SizeType) * PointType::dim * m_binCount);
-			memset(m_maxBins, 0, sizeof(SizeType) * PointType::dim * m_binCount);
+			memset(m_minBins, 0, sizeof(SizeType) * PointType::Dimension * m_binCount);
+			memset(m_maxBins, 0, sizeof(SizeType) * PointType::Dimension * m_binCount);
 			const int64_t maxBin = m_binCount-1;
 
 			for (SizeType i=0; i<m_primCount; ++i) {
 				const BoundingBoxType bbox = derived->getBoundingBox(indices[i]);
-				for (int axis=0; axis<PointType::dim; ++axis) {
+				for (int axis=0; axis<PointType::Dimension; ++axis) {
 					int64_t minIdx = (int64_t) ((bbox.min[axis] - m_bbox.min[axis]) 
 							* m_invBinSize[axis]);
 					int64_t maxIdx = (int64_t) ((bbox.max[axis] - m_bbox.min[axis]) 
@@ -2216,7 +2180,7 @@ protected:
 			int binIdx = 0, leftBin = 0;
 			TreeConstructionHeuristic tch(m_bbox);
 
-			for (int axis=0; axis<PointType::dim; ++axis) {
+			for (int axis=0; axis<PointType::Dimension; ++axis) {
 				VectorType extents = m_bbox.getExtents();
 				SizeType numLeft = 0, numRight = m_primCount;
 				float leftWidth = 0, rightWidth = extents[axis];
@@ -2433,10 +2397,64 @@ protected:
 	BuildInterface m_interface;
 };
 
+/**
+ * \brief Implements the 3D surface area heuristic so that it can be
+ * used by the \ref GenericKDTree construction algorithm.
+ */
+class SurfaceAreaHeuristic3 {
+public:
+	/**
+	 * \brief Initialize the surface area heuristic with the bounds of 
+	 * a parent node
+	 *
+	 * Precomputes some information so that traversal probabilities
+	 * of potential split planes can be evaluated efficiently
+	 */
+	inline SurfaceAreaHeuristic3(const BoundingBox3f &aabb) {
+		const Vector3f extents(aabb.getExtents());
+		const float temp = 1.0f / (extents[0] * extents[1] 
+				+ extents[1]*extents[2] + extents[0]*extents[2]);
+		m_temp0 = Vector3f(
+			extents[1] * extents[2],
+			extents[0] * extents[2],
+			extents[0] * extents[1]) * temp;
+		m_temp1 = Vector3f(
+			extents[1] + extents[2],
+			extents[0] + extents[2],
+			extents[0] + extents[1]) * temp;
+	}
+
+	/**
+	 * Given a split on axis \a axis that produces children having extents
+	 * \a leftWidth and \a rightWidth along \a axis, compute the probability
+	 * of traversing the left and right child during a typical query
+	 * operation. 
+	 */
+	inline std::pair<float, float> operator()(int axis, float leftWidth, float rightWidth) const {
+		return std::pair<float, float>(
+			m_temp0[axis] + m_temp1[axis] * leftWidth,
+			m_temp0[axis] + m_temp1[axis] * rightWidth);
+	}
+
+	/**
+	 * Compute the underlying quantity used by the tree construction
+	 * heuristic. This is used to compute the final cost of a kd-tree.
+	 */
+	inline static float getQuantity(const BoundingBox3f &aabb) {
+		return aabb.getSurfaceArea();
+	}
+private:
+	Vector3f m_temp0, m_temp1;
+};
+
 #if defined(WIN32)
 /* Revert back to fast / non-strict IEEE 754 
    floating point computations */
 NORI_NAMESPACE_END
 #pragma float_control(precise, off)
+NORI_NAMESPACE_BEGIN
+#endif
+
+NORI_NAMESPACE_END
 
 #endif /* __KDTREE_GENERIC_H */

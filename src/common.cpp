@@ -176,4 +176,20 @@ void freeAligned(void *ptr) {
 #endif
 }
 
+int getCoreCount() {
+#if defined(WIN32)
+	SYSTEM_INFO sys_info;
+	GetSystemInfo(&sys_info);
+	return sys_info.dwNumberOfProcessors;
+#elif defined(__OSX__)
+	int nprocs;
+	size_t nprocsSize = sizeof(int);
+	if (sysctlbyname("hw.activecpu", &nprocs, &nprocsSize, NULL, 0))
+		SLog(EError, "Could not detect the number of processors!");
+	return (int) nprocs;
+#else
+	return sysconf(_SC_NPROCESSORS_CONF);
+#endif
+}
+
 NORI_NAMESPACE_END

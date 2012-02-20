@@ -50,6 +50,18 @@
 #define SQRT_TWO     1.41421356237309504880f
 #define INV_SQRT_TWO 0.70710678118654752440f
 
+/* Some optimization-related macros */
+#if defined(__GNUC__)
+#define EXPECT_TAKEN(a)        __builtin_expect(a, true)
+#define EXPECT_NOT_TAKEN(a)    __builtin_expect(a, false)
+#if defined(__LINUX__) 
+#define __restrict             __restrict__
+#endif
+#else
+#define EXPECT_TAKEN(a)        
+#define EXPECT_NOT_TAKEN(a)    
+#endif
+
 NORI_NAMESPACE_BEGIN
 
 /* Forward declarations */
@@ -193,6 +205,9 @@ extern void *allocAligned(size_t size);
 
 /// Free an aligned region of memory
 extern void freeAligned(void *ptr);
+
+/// Return the number of cores (real and virtual)
+extern int getCoreCount();
 
 NORI_NAMESPACE_END
 

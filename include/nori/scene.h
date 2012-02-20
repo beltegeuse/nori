@@ -19,7 +19,7 @@
 #if !defined(__SCENE_H)
 #define __SCENE_H
 
-#include <nori/object.h>
+#include <nori/kdtree.h>
 
 NORI_NAMESPACE_BEGIN
 
@@ -55,6 +55,7 @@ public:
 	EClassType getClassType() const { return EScene; }
 private:
 	std::vector<NoriObject *> m_meshes;
+	KDTree m_kdtree;
 };
 
 NORI_NAMESPACE_END

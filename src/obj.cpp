@@ -105,8 +105,11 @@ public:
 			}
 		}
 
-		cout << "Loaded " << indices.size()/3 << " triangles and "
-			 << vertices.size() << " vertices" << endl;
+		m_triangleCount = indices.size() / 3;
+		m_vertexCount = vertices.size();
+
+		cout << "Loaded " << m_triangleCount << " triangles and "
+			 << m_vertexCount << " vertices" << endl;
 
 		/* Create the compact in-memory representation (i.e. without 
 		   unused buffer space). This involves some copying and following
@@ -116,19 +119,19 @@ public:
 		for (size_t i=0; i<indices.size(); ++i)
 			m_indices[i] = indices[i];
 
-		m_vertexPositions = new Point3f[vertices.size()];
-		for (size_t i=0; i<vertices.size(); ++i)
+		m_vertexPositions = new Point3f[m_vertexCount];
+		for (size_t i=0; i<m_vertexCount; ++i)
 			m_vertexPositions[i] = normals.at(vertices[i].p);
 
 		if (!normals.empty()) {
-			m_vertexNormals = new Normal3f[vertices.size()];
-			for (size_t i=0; i<vertices.size(); ++i)
+			m_vertexNormals = new Normal3f[m_vertexCount];
+			for (size_t i=0; i<m_vertexCount; ++i)
 				m_vertexNormals[i] = normals.at(vertices[i].n);
 		}
 
 		if (!texcoords.empty()) {
-			m_vertexTexCoords = new Point2f[vertices.size()];
-			for (size_t i=0; i<vertices.size(); ++i)
+			m_vertexTexCoords = new Point2f[m_vertexCount];
+			for (size_t i=0; i<m_vertexCount; ++i)
 				m_vertexTexCoords[i] = texcoords.at(vertices[i].uv);
 		}
 	}

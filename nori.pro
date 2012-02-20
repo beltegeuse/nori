@@ -9,6 +9,7 @@ SOURCES += src/common.cpp \
 	src/chi2test.cpp \
 	src/ttest.cpp \
 	src/mesh.cpp \
+	src/kdtree.cpp \
 	src/obj.cpp \
 	src/bitmap.cpp \
 	src/parser.cpp \
@@ -29,8 +30,9 @@ QT += xml xmlpatterns opengl
 
 macx | unix {
 	QMAKE_CXXFLAGS += -O3 -march=nocona -msse2 -mfpmath=sse -fstrict-aliasing
-	INCLUDEPATH += /usr/include/OpenEXR
-	LIBS += -lIlmImf
+	QMAKE_LIBPATH += /usr/local/lib
+	INCLUDEPATH += /usr/include/OpenEXR /usr/local/include/OpenEXR
+	LIBS += -lIlmImf -lIex
 }
 
 win32 {

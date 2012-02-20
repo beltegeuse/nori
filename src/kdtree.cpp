@@ -16,37 +16,30 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <nori/scene.h>
-#include <nori/bitmap.h>
+#include <nori/kdtree.h>
 
 NORI_NAMESPACE_BEGIN
 
-Scene::Scene(const PropertyList &) {
+KDTree::KDTree() : m_primitiveCount(0) {
+	m_sizeMap.push_back(0);
 }
 
-Scene::~Scene() {
+KDTree::~KDTree() {
+	for (size_t i=0; i<m_meshes.size(); ++i)
+		delete m_meshes[i];
 }
 
-void Scene::activate() {
-	m_kdtree.build();
+void KDTree::build() {
+	SizeType primCount = getPrimitiveCount();
+	cout << "Constructing a SAH kd-tree (" << primCount << " triangles, "
+		 << getCoreCount() << " threads) .." << endl;
+	Parent::buildInternal();
 }
 
-void Scene::addChild(NoriObject *obj) {
-	switch (obj->getClassType()) {
-		case EMesh:
-			m_kdtree.addMesh(static_cast<Mesh *>(obj));
-			break;
-
-		default:
-			throw NoriException(QString("Scene::addChild(<%1>) is not supported!").arg(
-				classTypeName(obj->getClassType())));
-	}
+void KDTree::addMesh(Mesh *mesh) {
+	m_primitiveCount += mesh->getTriangleCount();
+	m_meshes.push_back(mesh);
+	m_sizeMap.push_back(m_sizeMap.back() + mesh->getTriangleCount());
 }
 
-	
-QString Scene::toString() const {
-	return QString("Scene[]");
-}
-
-NORI_REGISTER_CLASS(Scene, "scene");
 NORI_NAMESPACE_END
