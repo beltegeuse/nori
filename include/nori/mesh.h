@@ -25,12 +25,27 @@
 
 NORI_NAMESPACE_BEGIN
 
+/**
+ * \brief Intersection data structure
+ *
+ * This data structure records local information about a ray-triangle intersection.
+ * This includes the position, traveled ray distance, uv coordinates, as well
+ * as well as two local coordinate frames (one that corresponds to the true
+ * geometry, and one that is used for shading computations).
+ */
 struct Intersection {
+	/// Position of the surface intersection
 	Point3f p;
+	/// Unoccluded distance along the ray
 	float t;
+	/// UV coordinates, if any
 	Point2f uv;
+	/// Shading frame (based on the shading normal)
 	Frame shFrame;
+	/// Geometric frame (based on the true geometry)
 	Frame geoFrame;
+	/// Pointer to the associated mesh
+	const Mesh *mesh;
 };
 
 /**
@@ -83,18 +98,20 @@ public:
 
 	/** \brief Ray-triangle intersection test
 	 * 
-	 * Uses the algorithm presented by Moeller and Trumbore at
+	 * Uses the algorithm by Moeller and Trumbore discussed at
 	 * <tt>http://www.acm.org/jgt/papers/MollerTrumbore97/code.html</tt>.
 	 *
 	 * \param index
 	 *    Index of the triangle that should be intersected
+	 * \param ray
+	 *    The ray segment to be used for the intersection query
 	 * \param t
 	 *    Upon success, \a t contains the distance from the ray origin to the
 	 *    intersection point,
 	 * \param u
 	 *   Upon success, \c u will contain the 'U' component of the intersection
 	 *   in barycentric coordinates
-	 * \param u
+	 * \param v
 	 *   Upon success, \c v will contain the 'V' component of the intersection
 	 *   in barycentric coordinates
 	 * \return
@@ -113,6 +130,9 @@ public:
 
 	/// Return a pointer to the texture coordinates (or \c NULL if there are none)
 	inline const Point2f *getVertexTexCoords() const { return m_vertexTexCoords; }
+
+	/// Return a pointer to the triangle vertex index list
+	inline const uint32_t *getIndices() const { return m_indices; }
 
 	/// Register a child object (e.g. a BSDF) with the mesh
 	virtual void addChild(NoriObject *child);

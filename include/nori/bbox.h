@@ -321,7 +321,7 @@ template <typename _PointType> struct TBoundingBox {
 	 *
 	 * Also returns intersections along the negative ray direction.
 	 */
-	bool rayIntersect(const TRay<PointType, VectorType> &ray, Scalar &nearT, Scalar &farT) const {
+	inline bool rayIntersect(const TRay<PointType, VectorType> &ray, Scalar &nearT, Scalar &farT) const {
 		nearT = -std::numeric_limits<Scalar>::infinity();
 		farT  =  std::numeric_limits<Scalar>::infinity();
 

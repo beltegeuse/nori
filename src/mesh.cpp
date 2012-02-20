@@ -36,6 +36,7 @@ Mesh::~Mesh() {
 	if (m_vertexTexCoords)
 		delete[] m_vertexTexCoords;
 	delete[] m_indices;
+
 	if (m_bsdf)
 		delete m_bsdf;
 }
@@ -43,13 +44,11 @@ Mesh::~Mesh() {
 void Mesh::activate() {
 	/* Create a discrete distribution for sampling triangles
 	   with respect to their surface area */
-
 	m_distr.clear();
 	m_distr.reserve(m_triangleCount);
 	for (uint32_t i=0; i<m_triangleCount; ++i)
 		m_distr.append(surfaceArea(i));
 	m_distr.normalize();
-
 
 	/* If no material was assigned, instantiate a diffuse BRDF */
 	m_bsdf = static_cast<BSDF *>(

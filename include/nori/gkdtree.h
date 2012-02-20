@@ -35,6 +35,9 @@
     data structures on the stack */
 #define NORI_KD_MAXDEPTH 48
 
+/// Set to 1 to display various statistics about the kd-tree
+#define NORI_KD_VERBOSE 0
+
 /// OrderedChunkAllocator: don't create chunks smaller than 512 KiB
 #define NORI_KD_MIN_ALLOC 512*1024
 
@@ -644,7 +647,7 @@ public:
 		m_traversalCost = 15;
 		m_queryCost = 20;
 		m_emptySpaceBonus = 0.9f;
-		m_clip = false;
+		m_clip = true;
 		m_stopPrims = 6;
 		m_maxBadRefines = 3;
 		m_exactPrimThreshold = 65536;
@@ -886,18 +889,21 @@ protected:
 			indices[i] = i;
 		}
 
-		cout << "kd-tree configuration" << endl
-			 << "  Traversal cost           : " << m_traversalCost << endl
-			 << "  Query cost               : " << m_queryCost << endl
-			 << "  Empty space bonus        : " << m_emptySpaceBonus << endl
-			 << "  Max. tree depth          : " << m_maxDepth << endl
-			 << "  Scene bouning box        : " << qPrintable(bbox.toString()) << endl
-			 << "  Min-max bins             : " << m_minMaxBins << endl
-			 << "  O(n log n method)        : use for " << m_exactPrimThreshold << " primitives" << endl
-			 << "  Perfect splits           : " << m_clip << endl
-			 << "  Retract bad splits       : " << m_retract << endl
-			 << "  Stopping primitive count : " << m_stopPrims << endl
-			 << "  Build tree in parallel   : " << m_parallelBuild << endl;
+		#if NORI_KD_VERBOSE == 1
+			cout << "kd-tree configuration" << endl
+				<< "  Traversal cost             : " << m_traversalCost << endl
+				<< "  Query cost                 : " << m_queryCost << endl
+				<< "  Empty space bonus          : " << m_emptySpaceBonus << endl
+				<< "  Max. tree depth            : " << m_maxDepth << endl
+				<< "  Scene bouning box (min)    : " << qPrintable(bbox.min.toString()) << endl
+				<< "  Scene bouning box (max)    : " << qPrintable(bbox.max.toString()) << endl
+				<< "  Min-max bins               : " << m_minMaxBins << endl
+				<< "  O(n log n method)          : use for " << m_exactPrimThreshold << " primitives" << endl
+				<< "  Perfect splits             : " << m_clip << endl
+				<< "  Retract bad splits         : " << m_retract << endl
+				<< "  Stopping primitive count   : " << m_stopPrims << endl
+				<< "  Build tree in parallel     : " << m_parallelBuild << endl << endl;
+		#endif
 
 		SizeType procCount = getCoreCount();
 		if (procCount == 1)
@@ -1058,23 +1064,25 @@ protected:
 		bbox.min -= (bbox.max-bbox.min) * eps + VectorType(eps);
 		bbox.max += (bbox.max-bbox.min) * eps + VectorType(eps);
 
-		cout << "Structural kd-tree statistics" << endl
-			 << "  Parallel work units         : " << m_interface.threadMap.size() << endl
-			 << "  Node storage cost           : " << (nodePtr * sizeof(KDNode)) / 1024 << " KiB" << endl
-			 << "  Index storage cost          : " << (indexPtr * sizeof(IndexType)) / 1024 << " KiB" << endl
-			 << "  Inner nodes                 : " << ctx.innerNodeCount << endl
-			 << "  Leaf nodes                  : " << ctx.leafNodeCount << endl
-			 << "  Nonempty leaf nodes         : " << ctx.nonemptyLeafNodeCount << endl;
+		#if NORI_KD_VERBOSE == 1
+			cout << "Structural kd-tree statistics" << endl
+				<< "  Parallel work units         : " << m_interface.threadMap.size() << endl
+				<< "  Node storage cost           : " << (nodePtr * sizeof(KDNode)) / 1024 << " KiB" << endl
+				<< "  Index storage cost          : " << (indexPtr * sizeof(IndexType)) / 1024 << " KiB" << endl
+				<< "  Inner nodes                 : " << ctx.innerNodeCount << endl
+				<< "  Leaf nodes                  : " << ctx.leafNodeCount << endl
+				<< "  Nonempty leaf nodes         : " << ctx.nonemptyLeafNodeCount << endl << endl;
 		
-		cout << "Qualitative kd-tree statistics" << endl
-			 << "  Retracted splits            : " << ctx.retractedSplits << endl
-			 << "  Pruned primitives           : " << ctx.pruned << endl
-			 << "  Largest leaf node           : " << maxPrimsInLeaf << endl
-			 << "  Avg. prims / nonempty leaf  : " << ctx.primIndexCount / (float) ctx.nonemptyLeafNodeCount << endl
-			 << "  Expected traversals/query   : " << expTraversalSteps << endl
-			 << "  Expected leaf visits/query  : " << expLeavesVisited << endl
-			 << "  Expected prim. visits/query : " << expPrimitivesIntersected << endl
-			 << "  Final cost                  : " << heuristicCost << endl;
+			cout << "Qualitative kd-tree statistics" << endl
+				<< "  Retracted splits            : " << ctx.retractedSplits << endl
+				<< "  Pruned primitives           : " << ctx.pruned << endl
+				<< "  Largest leaf node           : " << maxPrimsInLeaf << endl
+				<< "  Avg. prims / nonempty leaf  : " << ctx.primIndexCount / (float) ctx.nonemptyLeafNodeCount << endl
+				<< "  Expected traversals/query   : " << expTraversalSteps << endl
+				<< "  Expected leaf visits/query  : " << expLeavesVisited << endl
+				<< "  Expected prim. visits/query : " << expPrimitivesIntersected << endl
+				<< "  Final cost                  : " << heuristicCost << endl << endl;
+		#endif
 
 		cout << "Finished after " << timer.elapsed() << " ms (used "  
 			<< totalUsage/1024 << " KiB of temp. memory)" << endl 
