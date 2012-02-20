@@ -112,6 +112,8 @@ class Mesh;
 class BSDF;
 class Camera;
 class Luminaire;
+class Integrator;
+class KDTree;
 
 /// Import cout, cerr, endl for debugging purposes
 using std::cout;

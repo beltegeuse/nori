@@ -61,7 +61,7 @@ public:
 	/// Release all memory
 	virtual ~Mesh();
 	
-	/// Initialize internal data structures (called once by the XML parcer)
+	/// Initialize internal data structures (called once by the XML parser)
 	virtual void activate();
 
 	/// Return the total number of triangles in this hsape

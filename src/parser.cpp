@@ -30,12 +30,13 @@ public:
 	/// Set of supported XML tags
 	enum ETag {
 		/* Object classes */
-		EScene     = NoriObject::EScene,
-		EMesh     = NoriObject::EMesh,
-		EBSDF      = NoriObject::EBSDF,
-		ELuminaire = NoriObject::ELuminaire,
-		ECamera    = NoriObject::ECamera,
-		ETest      = NoriObject::ETest, 
+		EScene      = NoriObject::EScene,
+		EMesh       = NoriObject::EMesh,
+		EBSDF       = NoriObject::EBSDF,
+		ELuminaire  = NoriObject::ELuminaire,
+		ECamera     = NoriObject::ECamera,
+		EIntegrator = NoriObject::EIntegrator,
+		ETest       = NoriObject::ETest, 
 
 		/* Properties */
 		EBoolean = NoriObject::EClassTypeCount,
@@ -54,24 +55,25 @@ public:
 
 	NoriParser() : m_root(NULL) {
 		/* Mapping from tag names to tag IDs */
-		m_tags["scene"]     = EScene;
-		m_tags["mesh"]     = EMesh;
-		m_tags["bsdf"]      = EBSDF;
-		m_tags["luminaire"] = ELuminaire;
-		m_tags["camera"]    = ECamera;
-		m_tags["test"]      = ETest;
-		m_tags["boolean"]   = EBoolean;
-		m_tags["integer"]   = EInteger;
-		m_tags["float"]     = EFloat;
-		m_tags["string"]    = EString;
-		m_tags["point"]     = EPoint;
-		m_tags["vector"]    = EVector;
-		m_tags["color"]     = EColor;
-		m_tags["transform"] = ETransform;
-		m_tags["translate"] = ETranslate;
-		m_tags["rotate"]    = ERotate;
-		m_tags["scale"]     = EScale;
-		m_tags["lookat"]    = ELookAt;
+		m_tags["scene"]      = EScene;
+		m_tags["mesh"]       = EMesh;
+		m_tags["bsdf"]       = EBSDF;
+		m_tags["luminaire"]  = ELuminaire;
+		m_tags["camera"]     = ECamera;
+		m_tags["integrator"] = EIntegrator;
+		m_tags["test"]       = ETest;
+		m_tags["boolean"]    = EBoolean;
+		m_tags["integer"]    = EInteger;
+		m_tags["float"]      = EFloat;
+		m_tags["string"]     = EString;
+		m_tags["point"]      = EPoint;
+		m_tags["vector"]     = EVector;
+		m_tags["color"]      = EColor;
+		m_tags["transform"]  = ETransform;
+		m_tags["translate"]  = ETranslate;
+		m_tags["rotate"]     = ERotate;
+		m_tags["scale"]      = EScale;
+		m_tags["lookat"]     = ELookAt;
 	}
 
 	struct ParserContext {

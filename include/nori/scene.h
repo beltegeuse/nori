@@ -49,13 +49,23 @@ public:
 	/// Add a child object to the scene (meshes, integrators etc.)
 	void addChild(NoriObject *obj);
 
+	/// Return a pointer to the scene's kd-tree
+	inline const KDTree *getKDTree() const { return m_kdtree; }
+
+	/// Return a pointer to the scene's integrator
+	inline const Integrator *getIntegrator() const { return m_integrator; }
+
+	/// Return a reference to an array containing all meshes
+	inline const std::vector<Mesh *> &getMeshes() const { return m_meshes; }
+
 	/// Return a brief string summary of the instance (for debugging purposes)
 	QString toString() const;
 
 	EClassType getClassType() const { return EScene; }
 private:
-	std::vector<NoriObject *> m_meshes;
-	KDTree m_kdtree;
+	std::vector<Mesh *> m_meshes;
+	Integrator *m_integrator;
+	KDTree *m_kdtree;
 };
 
 NORI_NAMESPACE_END

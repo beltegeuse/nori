@@ -38,6 +38,7 @@ public:
 		EBSDF,
 		ELuminaire,
 		ECamera,
+		EIntegrator,
 		ETest,
 		EClassTypeCount
 	};
