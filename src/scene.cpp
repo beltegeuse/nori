@@ -19,15 +19,24 @@
 #include <nori/scene.h>
 #include <nori/bitmap.h>
 #include <nori/integrator.h>
+#include <nori/sampler.h>
+#include <nori/camera.h>
 
 NORI_NAMESPACE_BEGIN
 
-Scene::Scene(const PropertyList &) {
+Scene::Scene(const PropertyList &) 
+	: m_integrator(NULL), m_sampler(NULL), m_camera(NULL) {
 	m_kdtree = new KDTree();
 }
 
 Scene::~Scene() {
 	delete m_kdtree;
+	if (m_sampler)
+		delete m_sampler;
+	if (m_camera)
+		delete m_camera;
+	if (m_integrator)
+		delete m_integrator;
 }
 
 void Scene::activate() {
@@ -35,6 +44,13 @@ void Scene::activate() {
 
 	if (!m_integrator)
 		throw NoriException("No integrator was specified!");
+	if (!m_sampler)
+		throw NoriException("No sample generator was specified!");
+	if (!m_camera)
+		throw NoriException("No camera was specified!");
+
+	cout << endl;
+	cout << "Configuration: " << qPrintable(toString()) << endl;
 }
 
 void Scene::addChild(NoriObject *obj) {
@@ -42,7 +58,19 @@ void Scene::addChild(NoriObject *obj) {
 		case EMesh:
 			m_kdtree->addMesh(static_cast<Mesh *>(obj));
 			break;
-		
+
+		case ESampler:
+			if (m_sampler)
+				throw NoriException("There can only be one sampler per scene!");
+			m_sampler = static_cast<Sampler *>(obj);
+			break;
+
+		case ECamera:
+			if (m_camera)
+				throw NoriException("There can only be one camera per scene!");
+			m_camera = static_cast<Camera *>(obj);
+			break;
+
 		case EIntegrator:
 			if (m_integrator)
 				throw NoriException("There can only be one integrator per scene!");
@@ -55,9 +83,16 @@ void Scene::addChild(NoriObject *obj) {
 	}
 }
 
-	
 QString Scene::toString() const {
-	return QString("Scene[]");
+	return QString(
+		"Scene[\n"
+		"  integrator = %1,\n"
+		"  camera = %2,\n"
+		"  sampler = %3\n"
+		"]")
+	.arg(indent(m_integrator->toString()))
+	.arg(indent(m_camera->toString()))
+	.arg(indent(m_sampler->toString()));
 }
 
 NORI_REGISTER_CLASS(Scene, "scene");

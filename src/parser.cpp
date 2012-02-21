@@ -36,6 +36,7 @@ public:
 		ELuminaire  = NoriObject::ELuminaire,
 		ECamera     = NoriObject::ECamera,
 		EIntegrator = NoriObject::EIntegrator,
+		ESampler    = NoriObject::ESampler,
 		ETest       = NoriObject::ETest, 
 
 		/* Properties */
@@ -61,6 +62,7 @@ public:
 		m_tags["luminaire"]  = ELuminaire;
 		m_tags["camera"]     = ECamera;
 		m_tags["integrator"] = EIntegrator;
+		m_tags["sampler"]    = ESampler;
 		m_tags["test"]       = ETest;
 		m_tags["boolean"]    = EBoolean;
 		m_tags["integer"]    = EInteger;
@@ -74,6 +76,11 @@ public:
 		m_tags["rotate"]     = ERotate;
 		m_tags["scale"]      = EScale;
 		m_tags["lookat"]     = ELookAt;
+	}
+
+	virtual ~NoriParser() {
+		if (m_root)
+			delete m_root;
 	}
 
 	struct ParserContext {
@@ -136,9 +143,10 @@ public:
 
 			if (obj->getClassType() != (int) tag)
 				throw NoriException(QString("Unexpectedly constructed an object "
-					"of type <%1> (expected type <%2>)")
+					"of type <%1> (expected type <%2>): %3")
 				.arg(NoriObject::classTypeName(obj->getClassType()))
-				.arg(NoriObject::classTypeName((NoriObject::EClassType) tag)));
+				.arg(NoriObject::classTypeName((NoriObject::EClassType) tag))
+				.arg(obj->toString()));
 
 			/* Add all children */
 			for (size_t i=0; i<context.children.size(); ++i)

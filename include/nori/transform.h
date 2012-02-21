@@ -88,6 +88,9 @@ public:
 			r.mint, r.maxt
 		);
 	}
+
+	/// Return a string representation
+	QString toString() const;
 private:
 	Eigen::Matrix4f m_transform;
 	Eigen::Matrix4f m_inverse;

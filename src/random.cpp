@@ -1,3 +1,12 @@
+/**
+ * =======================================================================
+ *   WARNING    WARNING    WARNING    WARNING    WARNING    WARNING
+ * =======================================================================
+ *   Remember to put on SAFETY GOGGLES before looking at this file. You
+ *   are most certainly not expected to read or understand any of it.
+ * =======================================================================
+ */
+
 /*
    Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
    All rights reserved.                          
@@ -84,6 +93,13 @@ void Random::seed(uint32_t *values, int length) {
 	}
 
 	m_mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */ 
+}
+
+void Random::seed(Random *random) {
+	uint32_t buf[MT_N];
+	for (int i=0; i<MT_N; ++i)
+		buf[i] = random->nextUInt();
+	seed(buf, MT_N);
 }
 
 /* generates a random number on [0,0xffffffff]-interval */

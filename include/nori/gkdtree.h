@@ -18,6 +18,15 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * =======================================================================
+ *   WARNING    WARNING    WARNING    WARNING    WARNING    WARNING
+ * =======================================================================
+ *   Remember to put on SAFETY GOGGLES before looking at this file. You
+ *   are most certainly not expected to read or understand any of it.
+ * =======================================================================
+ */
+
 #if !defined(__KDTREE_GENERIC_H)
 #define __KDTREE_GENERIC_H
 
@@ -114,7 +123,7 @@ public:
 	 * Walks through the list of chunks to find one with enough
 	 * free memory. If no chunk could be found, a new one is created.
 	 */
-	template <typename T> T * __restrict allocate(size_t size) {
+	template <typename T> T * allocate(size_t size) {
 		size *= sizeof(T);
 		for (std::vector<Chunk>::iterator it = m_chunks.begin();
 				it != m_chunks.end(); ++it) {
@@ -247,7 +256,7 @@ public:
 	 * create unused elements in the previous block if a new
 	 * one has to be allocated.
 	 */
-	inline T * __restrict allocate(size_t size) {
+	inline T * allocate(size_t size) {
 		size_t blockIdx = m_pos / BlockSize;
 		size_t offset = m_pos % BlockSize;
 		T *result;
@@ -492,24 +501,24 @@ public:
 		}
 
 		/// Return the left child (assuming that this is an interior node)
-		inline const KDNode * __restrict getLeft() const {
+		inline const KDNode * getLeft() const {
 			return this + 
 				((inner.combined & (uint32_t) EInnerOffsetMask) >> 2);
 		}
 
 		/// Return the sibling of the current node
-		inline const KDNode * __restrict getSibling() const {
+		inline const KDNode * getSibling() const {
 			return (const KDNode *) ((ptrdiff_t) this ^ (ptrdiff_t) 8);
 		}
 
 		/// Return the left child (assuming that this is an interior node)
-		inline KDNode * __restrict getLeft() {
+		inline KDNode * getLeft() {
 			return this + 
 				((inner.combined & (uint32_t) EInnerOffsetMask) >> 2);
 		}
 
 		/// Return the left child (assuming that this is an interior node)
-		inline const KDNode * __restrict getRight() const {
+		inline const KDNode * getRight() const {
 			return getLeft() + 1;
 		}
 
@@ -1009,13 +1018,13 @@ protected:
 				expTraversalSteps += quantity;
 				heuristicCost += quantity * m_traversalCost;
 
-				const KDNode *left;
+				const KDNode * left;
 				if (EXPECT_TAKEN(!node->isIndirection()))
 					left = node->getLeft();
 				else 
 					left = m_indirections[node->getIndirectionIndex()];
 
-				KDNode *children = &m_nodes[nodePtr];
+				KDNode * children = &m_nodes[nodePtr];
 				nodePtr += 2;
 				int axis = node->getAxis();
 				float split = node->getSplit();
@@ -1609,7 +1618,7 @@ protected:
 	    /*                              Recursion                               */
 	    /* ==================================================================== */
 
-		KDNode *children = ctx.nodes.allocate(2);
+		KDNode * children = ctx.nodes.allocate(2);
 
 		SizeType nodePosBeforeSplit = (SizeType) ctx.nodes.size();
 		SizeType indexPosBeforeSplit = (SizeType) ctx.indices.size();
@@ -2056,7 +2065,7 @@ protected:
 		/*                              Recursion                               */
 		/* ==================================================================== */
 
-		KDNode *children = ctx.nodes.allocate(2);
+		KDNode * children = ctx.nodes.allocate(2);
 
 		SizeType nodePosBeforeSplit = (SizeType) ctx.nodes.size();
 		SizeType indexPosBeforeSplit = (SizeType) ctx.indices.size();

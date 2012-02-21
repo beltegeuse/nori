@@ -24,7 +24,7 @@
 NORI_NAMESPACE_BEGIN
 
 /**
- * \brief Principal scene data structure
+ * \brief Main scene data structure
  *
  * This class holds information on scene objects and is responsible for
  * coordinating rendering jobs. It also provides useful query routines that 
@@ -38,6 +38,60 @@ public:
 	/// Release all memory
 	virtual ~Scene();
 
+	/// Return a pointer to the scene's kd-tree
+	inline const KDTree *getKDTree() const { return m_kdtree; }
+
+	/// Return a pointer to the scene's integrator
+	inline const Integrator *getIntegrator() const { return m_integrator; }
+
+	/// Return a reference to an array containing all meshes
+	inline const std::vector<Mesh *> &getMeshes() const { return m_meshes; }
+
+	/**
+	 * \brief Intersect a ray against all triangles stored in the scene
+	 * and return detailed intersection information
+	 *
+	 * \param ray
+	 *    A 3-dimensional ray data structure with minimum/maximum
+	 *    extent information
+	 *
+	 * \param its
+	 *    A detailed intersection record, which will be filled by the
+	 *    intersection query
+	 *
+	 * \return \c true if an intersection was found
+	 */
+	inline bool rayIntersect(const Ray3f &ray, Intersection &its) const {
+		return m_kdtree->rayIntersect(ray, its, false);
+	}
+
+	/**
+	 * \brief Intersect a ray against all triangles stored in the scene
+	 * and \a only determine whether or not there is an intersection.
+	 * 
+	 * This method much faster than the other ray tracing function,
+	 * but the performance comes at the cost of not providing any
+	 * additional information about the detected intersection 
+	 * (not even its position).
+	 *
+	 * \param ray
+	 *    A 3-dimensional ray data structure with minimum/maximum
+	 *    extent information
+	 *
+	 * \return \c true if an intersection was found
+	 */
+	inline bool rayIntersect(const Ray3f &ray) const {
+		Intersection its; /* Unused */
+		return m_kdtree->rayIntersect(ray, its, true);
+	}
+
+	/**
+	 * \brief Return an axis-aligned box that bounds the scene
+	 */
+	inline const BoundingBox3f &getBoundingBox() const {
+		return m_kdtree->getBoundingBox();
+	}
+
 	/**
 	 * \brief Inherited from \ref NoriObject::activate()
 	 *
@@ -49,15 +103,6 @@ public:
 	/// Add a child object to the scene (meshes, integrators etc.)
 	void addChild(NoriObject *obj);
 
-	/// Return a pointer to the scene's kd-tree
-	inline const KDTree *getKDTree() const { return m_kdtree; }
-
-	/// Return a pointer to the scene's integrator
-	inline const Integrator *getIntegrator() const { return m_integrator; }
-
-	/// Return a reference to an array containing all meshes
-	inline const std::vector<Mesh *> &getMeshes() const { return m_meshes; }
-
 	/// Return a brief string summary of the instance (for debugging purposes)
 	QString toString() const;
 
@@ -65,6 +110,8 @@ public:
 private:
 	std::vector<Mesh *> m_meshes;
 	Integrator *m_integrator;
+	Sampler *m_sampler;
+	Camera *m_camera;
 	KDTree *m_kdtree;
 };
 

@@ -47,6 +47,9 @@ public:
 	
 	/// Seed the RNG with an entire array 
 	void seed(uint32_t *values, int length);
+	
+	/// Seed the RNG using an existing instance
+	void seed(Random *random);
 
 	/// Generate an uniformly distributed 32-bit integer
 	uint32_t nextUInt();

@@ -17,30 +17,51 @@
 */
 
 #include <nori/integrator.h>
+#include <nori/sampler.h>
+#include <nori/scene.h>
 
 NORI_NAMESPACE_BEGIN
 
+/**
+ * \brief Ambient occlusion: very simple rendering technique that adds
+ * "depth" to renderings by accounting for local shadowing.
+ */
 class AmbientOcclusion : public Integrator {
 public:
 	AmbientOcclusion(const PropertyList &propList) {
-		/* Ray "distance" of the ambient occlusion queries
-		   relative to the scene size */
-		m_distance = propList.getFloat("distance", 0.05f);
+		/* Ray length of the ambient occlusion queries;
+		   expressed relative to the scene size */
+		m_length = propList.getFloat("length", 0.05f);
 	}
 
 	Color3f Li(const Scene *scene, Sampler *sampler, const Ray3f &ray) const {
+		/* Find the surface that is visible in the requested direction */
 		Intersection its;
-
 		if (!scene->rayIntersect(ray, its))
 			return Color3f(1.0f);
 
+		/* Sample a cosine-weighted direction from the hemisphere (local coordinates) */
 		Vector3f d = squareToCosineHemisphere(sampler->next2D());
-		Ray ray(its.p, its.shFrame.toWorld(d), Epsilon, m_distance); /// XXX fix maxt
 
-		return Color3f(scene->rayIntersect(ray) ? 1.0f : 0.0f);
+		/* Use the shading frame at "its" to convert it to world coordinates */
+		d = its.shFrame.toWorld(d);
+
+		/* Determine the length of the "shadow ray" based on the scene size
+		   and the configuration options */
+		float length = m_length * scene->getBoundingBox().getExtents().norm();
+
+		/* Create a new outgoing ray having extents (epsilon, length) */
+		Ray3f shadowRay(its.p, d, Epsilon, length);
+
+		/* Perform an occlusion test and return one or zero depending on the result */
+		return Color3f(scene->rayIntersect(shadowRay) ? 1.0f : 0.0f);
+	}
+
+	QString toString() const {
+		return QString("AmbientOcclusion[length=%1]").arg(m_length);
 	}
 private:
-	float m_distance;
+	float m_length;
 };
 
 NORI_REGISTER_CLASS(AmbientOcclusion, "ao");

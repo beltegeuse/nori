@@ -30,6 +30,10 @@ NORI_NAMESPACE_BEGIN
  * stores a ray segment [mint, maxt] (whose entries may include positive/negative
  * infinity), as well as the componentwise reciprocals of the ray direction.
  * That is just done for convenience, as these values are frequently required.
+ *
+ * \remark Important: be careful when changing the ray direction. You must
+ * call \ref update() to compute the componentwise reciprocals as well, or Nori's
+ * ray-triangle intersection code will go haywire.
  */
 template <typename _PointType, typename _VectorType> struct TRay {
 	typedef _PointType                  PointType;
@@ -63,7 +67,7 @@ template <typename _PointType, typename _VectorType> struct TRay {
 
 	/// Update the reciprocal ray directions after changing 'd'
 	inline void update() {
-		dRcp = d.array().cwiseInverse().matrix();
+		dRcp = d.cwiseInverse();
 	}
 
 	/// Return the position of a point along the ray

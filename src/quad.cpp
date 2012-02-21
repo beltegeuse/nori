@@ -1,6 +1,15 @@
 #include <nori/quad.h>
 #include <boost/bind.hpp>
 
+/**
+ * =======================================================================
+ *   WARNING    WARNING    WARNING    WARNING    WARNING    WARNING
+ * =======================================================================
+ *   Remember to put on SAFETY GOGGLES before looking at this file. You
+ *   are most certainly not expected to read or understand any of it.
+ * =======================================================================
+ */
+
 NORI_NAMESPACE_BEGIN
 
 /* Adaptive multidimensional integration of a vector of functions

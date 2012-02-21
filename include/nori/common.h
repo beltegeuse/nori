@@ -113,7 +113,9 @@ class BSDF;
 class Camera;
 class Luminaire;
 class Integrator;
+class Sampler;
 class KDTree;
+class Scene;
 
 /// Import cout, cerr, endl for debugging purposes
 using std::cout;
@@ -171,7 +173,7 @@ extern Vector3f squareToUniformSphere(const Point2f &sample);
 /// Uniformly sample a vector on the unit hemisphere with respect to solid angles
 extern Vector3f squareToUniformHemisphere(const Point2f &sample);
 
-/// Sample a cosine-weighted vector on the unit hemisphere with respect to solid angles
+/// Uniformly sample a vector on the unit hemisphere with respect to projected solid angles
 extern Vector3f squareToCosineHemisphere(const Point2f &sample);
 
 /// Uniformly sample a vector on a 2D disk
@@ -189,14 +191,17 @@ Vector3f sphericalDirection(float theta, float phi);
 /// Compute a direction for the given coordinates in spherical coordinates
 Point2f sphericalCoordinates(const Vector3f &dir);
 
+/// Indent a complete string (except for the first line) by the requested number of spaces
+QString indent(const QString &string, int amount = 2);
+
 #if defined(_GNU_SOURCE)
 	/// Convenience function for computing a sine and cosine at once
-	inline void sincos(float theta, float *sin, float *cos) {
+	inline void sincosf(float theta, float *sin, float *cos) {
 		::sincosf(theta, sin, cos);
 	}
 #else /* Uh oh -- no C99 support on MSVC++ */
 	/// Convenience function for computing a sine and cosine at once
-	inline void sincos(float theta, float *_sin, float *_cos) {
+	inline void sincosf(float theta, float *_sin, float *_cos) {
 		*_sin = sinf(theta);
 		*_cos = cosf(theta);
 	}

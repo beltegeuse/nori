@@ -97,6 +97,11 @@ public:
 	/// Return one of the registered meshes (const version)
 	inline const Mesh *getMesh(IndexType idx) const { return m_meshes[idx]; }
 
+	//// Return an axis-aligned bounding box containing the entire tree
+	inline const BoundingBox3f &getBoundingBox() const {
+		return m_bbox;
+	}
+
 	//// Return an axis-aligned bounding box containing the given triangle
 	inline BoundingBox3f getBoundingBox(IndexType index) const {
 		IndexType meshIdx = findMesh(index);
