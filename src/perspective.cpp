@@ -125,15 +125,15 @@ public:
 	QString toString() const {
 		return QString(
 			"PerspectiveCamera[\n"
-			"  size = %1,\n"
-			"  cameraToWorld = %3,\n"
-			"  fov = %4,\n"
-			"  apertureRadius = %5,\n"
-			"  focusDistance = %6,\n"
-			"  clip = [%7, %8]\n"
+			"  cameraToWorld = %1,\n"
+			"  size = %2,\n"
+			"  fov = %3,\n"
+			"  apertureRadius = %4,\n"
+			"  focusDistance = %5,\n"
+			"  clip = [%6, %7]\n"
 			"]")
-		.arg(m_size.toString())
 		.arg(indent(m_cameraToWorld.toString(), 18))
+		.arg(m_size.toString())
 		.arg(m_fov)
 		.arg(m_apertureRadius)
 		.arg(m_focusDistance)

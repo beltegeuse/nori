@@ -61,6 +61,42 @@ public:
 	}
 };
 
+/**
+ * \brief Represents a linear RGB color and a weight
+ *
+ * This is used by Nori's image reconstruction filter code
+ */
+struct Color4f : public Eigen::Array4f {
+public:
+	typedef Eigen::Array4f Base;
+
+	/// Initialize the color vector with specific per-channel values
+	inline Color4f(float r, float g, float b, float w) : Base(r, g, b, w) { }
+
+	/// Construct a color vector from ArrayBase (needed to play nice with Eigen)
+	template <typename Derived> inline Color4f(const Eigen::ArrayBase<Derived>& p) 
+		: Base(p) { }
+
+	/// Assign a color vector from ArrayBase (needed to play nice with Eigen)
+    template <typename Derived> Color4f &operator=(const Eigen::ArrayBase<Derived>& p) {
+		this->Base::operator=(p);
+		return *this;
+    }
+
+	/// Normalize and convert into a \ref Color3f value 
+	inline Color3f normalized() const {
+		if (EXPECT_TAKEN(w() != 0))
+			return head<3>() / w();
+		else
+			return Color3f(0.0f);
+	}
+
+	/// Return a human-readable string summary
+	inline QString toString() const {
+		return QString("[%1, %2, %3, %4]").arg(coeff(0)).arg(coeff(1)).arg(coeff(2)).arg(coeff(4));
+	}
+};
+
 NORI_NAMESPACE_END
 
 #endif /* __COLOR_H */

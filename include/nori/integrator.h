@@ -23,6 +23,8 @@
 #include <nori/dpdf.h>
 #include <nori/frame.h>
 
+#define NORI_BLOCK_SIZE 32 /* Block size used for parallelization */
+
 NORI_NAMESPACE_BEGIN
 
 /**
@@ -52,6 +54,14 @@ public:
 	 *    A (usually) unbiased estimate of the radiance in this direction
 	 */
 	virtual Color3f Li(const Scene *scene, Sampler *sampler, const Ray3f &ray) const = 0;
+
+	/**
+	 * \brief Render the scene
+	 *
+	 * The default implementation splits up the image into tiles
+	 * and assigns them to separate threads
+	 */
+	virtual void render(const Scene *scene);
 
 	/**
 	 * \brief Return the type of object (i.e. Mesh/BSDF/etc.) 

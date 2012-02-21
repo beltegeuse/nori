@@ -4,6 +4,7 @@ SOURCES += src/common.cpp \
 	src/diffuse.cpp \
 	src/microfacet.cpp \
 	src/scene.cpp \
+	src/integrator.cpp \
 	src/random.cpp \
 	src/quad.cpp \
 	src/ao.cpp \

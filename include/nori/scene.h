@@ -43,6 +43,15 @@ public:
 
 	/// Return a pointer to the scene's integrator
 	inline const Integrator *getIntegrator() const { return m_integrator; }
+	
+	/// Return a pointer to the scene's camera
+	inline const Camera *getCamera() const { return m_camera; }
+	
+	/// Return a pointer to the scene's sample generator (const version)
+	inline const Sampler *getSampler() const { return m_sampler; }
+	
+	/// Return a pointer to the scene's sample generator
+	inline Sampler *getSampler() { return m_sampler; }
 
 	/// Return a reference to an array containing all meshes
 	inline const std::vector<Mesh *> &getMeshes() const { return m_meshes; }
