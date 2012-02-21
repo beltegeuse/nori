@@ -30,14 +30,15 @@ public:
 	/// Set of supported XML tags
 	enum ETag {
 		/* Object classes */
-		EScene      = NoriObject::EScene,
-		EMesh       = NoriObject::EMesh,
-		EBSDF       = NoriObject::EBSDF,
-		ELuminaire  = NoriObject::ELuminaire,
-		ECamera     = NoriObject::ECamera,
-		EIntegrator = NoriObject::EIntegrator,
-		ESampler    = NoriObject::ESampler,
-		ETest       = NoriObject::ETest, 
+		EScene                = NoriObject::EScene,
+		EMesh                 = NoriObject::EMesh,
+		EBSDF                 = NoriObject::EBSDF,
+		ELuminaire            = NoriObject::ELuminaire,
+		ECamera               = NoriObject::ECamera,
+		EIntegrator           = NoriObject::EIntegrator,
+		ESampler              = NoriObject::ESampler,
+		ETest                 = NoriObject::ETest, 
+		EReconstructionFilter = NoriObject::EReconstructionFilter,
 
 		/* Properties */
 		EBoolean = NoriObject::EClassTypeCount,
@@ -63,6 +64,7 @@ public:
 		m_tags["camera"]     = ECamera;
 		m_tags["integrator"] = EIntegrator;
 		m_tags["sampler"]    = ESampler;
+		m_tags["rfilter"]    = EReconstructionFilter;
 		m_tags["test"]       = ETest;
 		m_tags["boolean"]    = EBoolean;
 		m_tags["integer"]    = EInteger;

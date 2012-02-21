@@ -111,11 +111,11 @@ class NoriObjectFactory;
 class Mesh;
 class BSDF;
 class Camera;
-class Luminaire;
 class Integrator;
 class Sampler;
 class KDTree;
 class Scene;
+class ReconstructionFilter;
 
 /// Import cout, cerr, endl for debugging purposes
 using std::cout;

@@ -14,6 +14,7 @@ SOURCES += src/common.cpp \
 	src/kdtree.cpp \
 	src/obj.cpp \
 	src/perspective.cpp \
+	src/rfilter.cpp \
 	src/bitmap.cpp \
 	src/parser.cpp \
 	src/independent.cpp \
@@ -34,17 +35,17 @@ QT += xml xmlpatterns opengl
 
 macx | unix {
 	QMAKE_CXXFLAGS_RELEASE -= -O2
-	QMAKE_CXXFLAGS_RELEASE += -O3 -march=nocona -msse2 -mfpmath=sse -fstrict-aliasing
+	QMAKE_CXXFLAGS += -O3 -march=nocona -msse2 -mfpmath=sse -fstrict-aliasing
 	QMAKE_LIBPATH += /usr/local/lib
 	INCLUDEPATH += /usr/include/OpenEXR /usr/local/include/OpenEXR
 	LIBS += -lIlmImf -lIex
 }
 
 win32 {
-	QMAKE_CXXFLAGS_RELEASE += /O2 /fp:fast /GS- /GL
-	QMAKE_LDFLAGS_RELEASE += /LTCG
+	QMAKE_CXXFLAGS += /O2 /fp:fast /GS- /GL
+	QMAKE_LDFLAGS += /LTCG
 }
 
 TARGET = nori
-CONFIG += console
+CONFIG += console 
 CONFIG -= app_bundle

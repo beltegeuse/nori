@@ -17,6 +17,7 @@
 */
 
 #include <nori/camera.h>
+#include <nori/rfilter.h>
 #include <Eigen/Geometry>
 
 NORI_NAMESPACE_BEGIN
@@ -35,6 +36,7 @@ public:
 		/* Width and height in pixels. Default: 720p */
 		m_size.x() = propList.getInteger("width", 1280);
 		m_size.y() = propList.getInteger("height", 720);
+		m_invSize = m_size.cast<float>().cwiseInverse();
 
 		/* Specifies an optional camera-to-world transformation. Default: none */
 		m_cameraToWorld = propList.getTransform("toWorld", Transform());
@@ -54,8 +56,7 @@ public:
 		m_nearClip = propList.getFloat("nearClip", 1e-4f);
 		m_farClip = propList.getFloat("nearClip", 1e4f);
 
-		/* Eigen rules :) */
-		m_invSize = m_size.cast<float>().cwiseInverse();
+		m_rfilter = NULL;
 	}
 
 
@@ -86,8 +87,12 @@ public:
 		 */
 		m_sampleToCamera = Transform( 
 			Eigen::DiagonalMatrix<float, 3>(Vector3f(0.5f, -0.5f * aspect, 1.0f)) *
-			Eigen::Translation<float, 3>(1.0f, -1.0f/aspect, 0.0f) *
-			perspective).inverse();
+			Eigen::Translation<float, 3>(1.0f, -1.0f/aspect, 0.0f) * perspective).inverse();
+
+		/* If no reconstruction filter was assigned, instantiate a Gaussian filter */
+		if (!m_rfilter)
+			m_rfilter = static_cast<ReconstructionFilter *>(
+				NoriObjectFactory::createInstance("gaussian", PropertyList()));
 	}
 
 	Color3f sampleRay(Ray3f &ray,
@@ -121,6 +126,20 @@ public:
 		return Color3f(1.0f);
 	}
 
+	void addChild(NoriObject *obj) {
+		switch (obj->getClassType()) {
+			case EReconstructionFilter:
+				if (m_rfilter)
+					throw NoriException("Camera: tried to register multiple reconstruction filters!");
+				m_rfilter = static_cast<ReconstructionFilter *>(obj);
+				break;
+
+			default:
+				throw NoriException(QString("Camera::addChild(<%1>) is not supported!").arg(
+					classTypeName(obj->getClassType())));
+		}
+	}
+
 	/// Return a human-readable summary
 	QString toString() const {
 		return QString(
@@ -130,7 +149,8 @@ public:
 			"  fov = %3,\n"
 			"  apertureRadius = %4,\n"
 			"  focusDistance = %5,\n"
-			"  clip = [%6, %7]\n"
+			"  clip = [%6, %7],\n"
+			"  rfilter = %8\n"
 			"]")
 		.arg(indent(m_cameraToWorld.toString(), 18))
 		.arg(m_size.toString())
@@ -138,7 +158,8 @@ public:
 		.arg(m_apertureRadius)
 		.arg(m_focusDistance)
 		.arg(m_nearClip)
-		.arg(m_farClip);
+		.arg(m_farClip)
+		.arg(indent(m_rfilter->toString()));
 	}
 private:
 	Vector2f m_invSize;

@@ -16,15 +16,15 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined(__Camera_H)
-#define __Camera_H
+#if !defined(__CAMERA_H)
+#define __CAMERA_H
 
 #include <nori/object.h>
 
 NORI_NAMESPACE_BEGIN
 
 /**
- * \brief Abstract camera interface
+ * \brief Generic camera interface
  * 
  * This class provides an abstract interface to cameras in Nori and
  * exposes the ability to sample their response function. By default, only
@@ -62,6 +62,9 @@ public:
 	/// Return the size of the output image in pixels
 	inline const Vector2i &getSize() const { return m_size; }
 
+	/// Return the camera's reconstruction filter in image space
+	inline const ReconstructionFilter *getReconstructionFilter() const { return m_rfilter; }
+
 	/**
 	 * \brief Return the type of object (i.e. Mesh/Camera/etc.) 
 	 * provided by this instance
@@ -69,8 +72,9 @@ public:
 	EClassType getClassType() const { return ECamera; }
 protected:
 	Vector2i m_size;
+	ReconstructionFilter *m_rfilter;
 };
 
 NORI_NAMESPACE_END
 
-#endif /* __Camera_H */
+#endif /* __CAMERA_H */

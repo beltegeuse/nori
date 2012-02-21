@@ -41,6 +41,7 @@ public:
 		EIntegrator,
 		ESampler,
 		ETest,
+		EReconstructionFilter,
 		EClassTypeCount
 	};
 
