@@ -70,6 +70,9 @@ struct Color4f : public Eigen::Array4f {
 public:
 	typedef Eigen::Array4f Base;
 
+	/// Create an zero value
+	inline Color4f() : Base(0.0f, 0.0f, 0.0f, 0.0f) { }
+
 	/// Initialize the color vector with specific per-channel values
 	inline Color4f(float r, float g, float b, float w) : Base(r, g, b, w) { }
 

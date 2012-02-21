@@ -23,6 +23,21 @@
 
 NORI_NAMESPACE_BEGIN
 
+// 
+class ImageBlock : public Eigen::Array<Color4f, NORI_BLOCK_SIZE, NORI_BLOCK_SIZE,
+	Eigen::RowMajor, NORI_BLOCK_SIZE, NORI_BLOCK_SIZE> {
+public:
+	void setOffset(const Point2i &offset) {
+		m_offset = offset;
+	}
+
+	void setSize(const Point2i &size) {
+		resize(size.x(), size.y());
+	}
+protected:
+	Point2i m_offset;
+};
+
 //// Reimplementation of the spiraling block generator by Adam Arbree
 class BlockGenerator {
 public:
@@ -41,13 +56,13 @@ public:
 		m_numSteps = 1;
 	}
 
-	bool next() {
+	bool next(ImageBlock &block) {
 		if (m_blocksLeft == 0)
 			return false;
 
 		Point2i pos = m_block * m_blockSize;
-//		rect.setOffset(pos);
-//		rect.setSize((m_size - pos).cwiseMin(Vector2i::Constant(m_blockSize)));
+		block.setOffset(pos);
+		block.setSize((m_size - pos).cwiseMin(Vector2i::Constant(m_blockSize)));
 
 		if (--m_blocksLeft == 0)
 			return false;
@@ -92,7 +107,8 @@ void Integrator::render(const Scene *scene) {
 	BlockGenerator blockgen(size, NORI_BLOCK_SIZE);
 	Bitmap bitmap(size);
 
-	while (blockgen.next()) {
+	ImageBlock block;
+	while (blockgen.next(block)) {
 		cout << "Rendering a block" << endl;
 	}
 }
