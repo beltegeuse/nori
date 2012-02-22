@@ -42,7 +42,7 @@ public:
 	}
 
 	QString toString() const {
-		return QString("GaussianFilter[radius=%i, stddev=%f]")
+		return QString("GaussianFilter[radius=%1, stddev=%2]")
 			.arg(m_radius).arg(m_stddev);
 	}
 protected:
@@ -82,7 +82,7 @@ public:
 	}
 
 	QString toString() const {
-		return QString("MitchellNetravaliFilter[radius=%i, B=%i, C=%i]")
+		return QString("MitchellNetravaliFilter[radius=%1, B=%2, C=%3]")
 			.arg(m_radius).arg(m_B).arg(m_C);
 	}
 protected:

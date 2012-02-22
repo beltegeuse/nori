@@ -61,8 +61,7 @@ public:
 	 * The default implementation splits up the image into tiles
 	 * and assigns them to separate threads
 	 */
-	virtual void render(const Scene *scene);
-
+	virtual void render(const Scene *scene, Sampler *sampler);
 	/**
 	 * \brief Return the type of object (i.e. Mesh/BSDF/etc.) 
 	 * provided by this instance

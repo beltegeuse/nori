@@ -19,6 +19,7 @@
 #include <nori/integrator.h>
 #include <nori/scene.h>
 #include <nori/camera.h>
+#include <nori/sampler.h>
 #include <nori/bitmap.h>
 
 NORI_NAMESPACE_BEGIN
@@ -31,11 +32,28 @@ public:
 		m_offset = offset;
 	}
 
+	/// Return the block offset block in pixels
+	inline const Point2i &getOffset() const { return m_offset; }
+	
+	/// Return the block size (minus border) in pixels
+	inline const Vector2i &getSize() const { return m_size; }
+
 	void setSize(const Point2i &size) {
+		m_size = size;
 		resize(size.x(), size.y());
 	}
+
+	void put(const Point2f &pos, const Color3f &value) {
+	}
+
+	QString toString() {
+		return QString("ImageBlock[offset=%1, size=%2]]")
+			.arg(m_offset.toString())
+			.arg(m_size.toString());
+	}
 protected:
-	Point2i m_offset;
+	Point2i  m_offset;
+	Vector2i m_size;
 };
 
 //// Reimplementation of the spiraling block generator by Adam Arbree
@@ -48,7 +66,7 @@ public:
 			(int) std::ceil(size.x() / (float) blockSize),
 			(int) std::ceil(size.y() / (float) blockSize));
 		m_blocksLeft = m_numBlocks.x() * m_numBlocks.y();
-		m_blockSize = blockSize;
+			m_blockSize = blockSize;
 		m_direction = ERight;
 		m_block = Point2i(m_numBlocks / 2);
 		m_size = size;
@@ -65,7 +83,7 @@ public:
 		block.setSize((m_size - pos).cwiseMin(Vector2i::Constant(m_blockSize)));
 
 		if (--m_blocksLeft == 0)
-			return false;
+			return true;
 
 		do {
 			switch (m_direction) {
@@ -99,8 +117,8 @@ protected:
 };
 
 
-
-void Integrator::render(const Scene *scene) {
+void Integrator::render(const Scene *scene, Sampler *sampler) {
+	const Integrator *integrator = scene->getIntegrator();
 	const Camera *camera = scene->getCamera();
 	Vector2i size = camera->getSize();
 	
@@ -109,7 +127,27 @@ void Integrator::render(const Scene *scene) {
 
 	ImageBlock block;
 	while (blockgen.next(block)) {
-		cout << "Rendering a block" << endl;
+		cout << "Rendering " << qPrintable(block.toString()) << endl;
+
+		Point2i offset = block.getOffset();
+		Vector2i size  = block.getSize();
+
+		for (int x=0; x<size.x(); ++x) {
+			for (int y=0; y<size.y(); ++y) {
+				for (uint32_t i=0; i<sampler->getSampleCount(); ++i) {
+					cout << x << ", " << y  << ", " << i << endl;
+					Point2f pixelSample = Point2f(x + offset.x(), y + offset.y()) + sampler->next2D();
+					Point2f apertureSample = sampler->next2D();
+
+					/* Sample a ray from the camera, and compute the incident radiance */
+					Ray3f ray;
+					Color3f value = camera->sampleRay(ray, pixelSample, apertureSample);
+					value *= integrator->Li(scene, sampler, ray);
+
+					block.put(pixelSample, value);
+				}
+			}
+		}
 	}
 }
 
