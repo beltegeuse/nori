@@ -41,6 +41,7 @@ public:
 		Transform trafo = propList.getTransform("toWorld", Transform());
 
 		cout << "Loading \"" << qPrintable(filename) << "\" .." << endl;
+		m_name = filename;
 
 		QTextStream stream(&input);
 		QTextStream line;

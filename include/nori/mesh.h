@@ -46,6 +46,12 @@ struct Intersection {
 	Frame geoFrame;
 	/// Pointer to the associated mesh
 	const Mesh *mesh;
+
+	/// Create an uninitialized intersection record
+	inline Intersection() : mesh(NULL) { }
+
+	/// Return a human-readable summary of the intersection record
+	QString toString() const;
 };
 
 /**
@@ -137,6 +143,9 @@ public:
 	/// Register a child object (e.g. a BSDF) with the mesh
 	virtual void addChild(NoriObject *child);
 
+	/// Return the name of this mesh
+	inline const QString &getName() const { return m_name; }
+
 	/// Return a human-readable summary of this instance
 	QString toString() const;
 
@@ -157,6 +166,7 @@ protected:
 	uint32_t m_triangleCount;
 	DiscretePDF m_distr;
 	BSDF    *m_bsdf;
+	QString m_name;
 };
 
 NORI_NAMESPACE_END

@@ -135,7 +135,6 @@ void Integrator::render(const Scene *scene, Sampler *sampler) {
 		for (int x=0; x<size.x(); ++x) {
 			for (int y=0; y<size.y(); ++y) {
 				for (uint32_t i=0; i<sampler->getSampleCount(); ++i) {
-					cout << x << ", " << y  << ", " << i << endl;
 					Point2f pixelSample = Point2f(x + offset.x(), y + offset.y()) + sampler->next2D();
 					Point2f apertureSample = sampler->next2D();
 

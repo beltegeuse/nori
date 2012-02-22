@@ -37,9 +37,9 @@ public:
 	Color3f Li(const Scene *scene, Sampler *sampler, const Ray3f &ray) const {
 		/* Find the surface that is visible in the requested direction */
 		Intersection its;
-		cout << "AO:" << qPrintable(ray.toString()) << endl;
 		if (!scene->rayIntersect(ray, its))
 			return Color3f(1.0f);
+		cout << "its:" << qPrintable(its.toString()) << endl;
 
 		/* Sample a cosine-weighted direction from the hemisphere (local coordinates) */
 		Vector3f d = squareToCosineHemisphere(sampler->next2D());

@@ -243,11 +243,34 @@ void Mesh::addChild(NoriObject *obj) {
 QString Mesh::toString() const {
 	return QString(
 		"Mesh[\n"
-		"  vertexCount = %1,\n"
-		"  triangleCount = %2\n"
+		"  name = \"%1\",\n"
+		"  vertexCount = %2,\n"
+		"  triangleCount = %3\n"
 		"]")
+	.arg(m_name)
 	.arg(m_vertexCount)
 	.arg(m_triangleCount);
+}
+
+QString Intersection::toString() const {
+	if (!mesh)
+		return "Intersection[invalid]";
+
+	return QString(
+		"Intersection[\n"
+		"  p = %1,\n"
+		"  t = %2,\n"
+		"  uv = %3,\n"
+		"  shFrame = %4,\n"
+		"  geoFrame = %5,\n"
+		"  mesh = %6\n"
+		"]")
+	.arg(p.toString())
+	.arg(t)
+	.arg(uv.toString())
+	.arg(indent(shFrame.toString()))
+	.arg(indent(geoFrame.toString()))
+	.arg(indent(mesh->toString()));
 }
 
 NORI_NAMESPACE_END

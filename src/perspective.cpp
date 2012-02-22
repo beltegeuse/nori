@@ -44,10 +44,6 @@ public:
 		/* Horizontal field of view in degrees */
 		m_fov = propList.getFloat("fov", 30.0f);
 
-		/* Denotes the world-space distance from the camera's aperture
-		   to the focal plane */
-		m_focusDistance = propList.getFloat("focusDistance", 0.0f);
-
 		/* Denotes the radios of the camera in scene units.
 		   Default: 0, i.e. no depth of field */
 		m_apertureRadius = propList.getFloat("apertureRadius", 0.0f);
@@ -55,6 +51,10 @@ public:
 		/* Near and far clipping planes in world-space units */
 		m_nearClip = propList.getFloat("nearClip", 1e-4f);
 		m_farClip = propList.getFloat("nearClip", 1e4f);
+
+		/* Denotes the world-space distance from the camera's aperture
+		   to the focal plane */
+		m_focusDistance = propList.getFloat("focusDistance", m_farClip);
 
 		m_rfilter = NULL;
 	}
@@ -107,12 +107,12 @@ public:
 			samplePosition.x() * m_invSize.x(),
 			samplePosition.y() * m_invSize.y(), 0.0f);
 
-		/* Aperture position */
 		Point3f apertureP(tmp.x(), tmp.y(), 0.0f);
 
 		/* Sampled position on the focal plane */
 		Point3f focusP = nearP * (m_focusDistance / nearP.z());
 
+		/* Aperture position */
 		/* Turn these into a normalized ray direction, and
 		   adjust the ray interval accordingly */
 		Vector3f d = (focusP - apertureP).normalized();

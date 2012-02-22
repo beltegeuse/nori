@@ -184,8 +184,8 @@ bool KDTree::rayIntersect(const Ray3f &ray, Intersection &its, bool shadowRay) c
 		const Point2f  *texCoords = mesh->getVertexTexCoords();
 
 		Point3f p0 = positions[idx0],
-			p1 = positions[idx0],
-			p2 = positions[idx0];
+			p1 = positions[idx1],
+			p2 = positions[idx2];
 
 		/* Compute the intersection positon accurately 
 		   using barycentric coordinates */
