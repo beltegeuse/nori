@@ -21,6 +21,9 @@
 
 #include <nori/object.h>
 
+/// Reconstruction filters will be tabulated at this resolution
+#define NORI_FILTER_RESOLUTION 32
+
 NORI_NAMESPACE_BEGIN
 
 /**
@@ -41,7 +44,7 @@ public:
 	inline float getRadius() const { return m_radius; }
 
 	/// Evaluate the filter function
-	virtual float eval(float r) const = 0;
+	virtual float eval(float x) const = 0;
 
 	/**
 	 * \brief Return the type of object (i.e. Mesh/Camera/etc.) 

@@ -102,6 +102,14 @@ typedef TBoundingBox<Point1f>   BoundingBox1f;
 typedef TBoundingBox<Point2f>   BoundingBox2f;
 typedef TBoundingBox<Point3f>   BoundingBox3f;
 typedef TBoundingBox<Point4f>   BoundingBox4f;
+typedef TBoundingBox<Point1d>   BoundingBox1d;
+typedef TBoundingBox<Point2d>   BoundingBox2d;
+typedef TBoundingBox<Point3d>   BoundingBox3d;
+typedef TBoundingBox<Point4d>   BoundingBox4d;
+typedef TBoundingBox<Point1i>   BoundingBox1i;
+typedef TBoundingBox<Point2i>   BoundingBox2i;
+typedef TBoundingBox<Point3i>   BoundingBox3i;
+typedef TBoundingBox<Point4i>   BoundingBox4i;
 typedef TRay<Point2f, Vector2f> Ray2f;
 typedef TRay<Point3f, Vector3f> Ray3f;
 

@@ -39,7 +39,6 @@ public:
 		Intersection its;
 		if (!scene->rayIntersect(ray, its))
 			return Color3f(1.0f);
-		cout << "its:" << qPrintable(its.toString()) << endl;
 
 		/* Sample a cosine-weighted direction from the hemisphere (local coordinates) */
 		Vector3f d = squareToCosineHemisphere(sampler->next2D());

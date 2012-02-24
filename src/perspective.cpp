@@ -59,7 +59,6 @@ public:
 		m_rfilter = NULL;
 	}
 
-
 	void activate() {
 		float aspect = m_size.x() / (float) m_size.y();
 

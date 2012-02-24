@@ -25,9 +25,32 @@
 NORI_NAMESPACE_BEGIN
 
 // 
-class ImageBlock : public Eigen::Array<Color4f, NORI_BLOCK_SIZE, NORI_BLOCK_SIZE,
-	Eigen::RowMajor, NORI_BLOCK_SIZE, NORI_BLOCK_SIZE> {
+class ImageBlock : public Eigen::Array<Color4f, Dynamic, Dynamic, Eigen::RowMajor> {
 public:
+	ImageBlock(ReconstructionFilter *filter, int blockSize) {
+		/* Tabulate the image reconstruction filter for performance reasons */
+		m_filterRadius = filter->getRadius();
+		m_borderSize = (int) std::ceil(filterRadius - 0.5f);
+		m_filter = new float[NORI_FILTER_RESOLUTION + 1];
+		for (int i=0; i<NORI_FILTER_RESOLUTION; ++i) {
+			float pos = (m_filterRadius * i) / (NORI_FILTER_RESOLUTION - 1);
+			m_filter[i] = filter->eval(pos);
+		}
+		m_filter[NORI_FILTER_RESOLUTION] = 0.0f;
+		m_filterFactor = NORI_FILTER_RESOLUTION / m_filterResolution;
+		m_weightsX = new float[(size_t) std::ceil(2*m_filterRadius)];
+		m_weightsY = new float[(size_t) std::ceil(2*m_filterRadius)];
+
+		/* Allocate space for pixels and weights */
+		resize(blockSize + 2*borderSize, blockSize + 2*borderSize);
+	}
+
+	~ImageBlock() {
+		delete[] m_filter;
+		delete[] m_weightsX;
+		delete[] m_weightsY;
+	}
+
 	void setOffset(const Point2i &offset) {
 		m_offset = offset;
 	}
@@ -40,10 +63,28 @@ public:
 
 	void setSize(const Point2i &size) {
 		m_size = size;
-		resize(size.x(), size.y());
 	}
 
-	void put(const Point2f &pos, const Color3f &value) {
+	void put(Point2f pos, const Color3f &value) {
+		/* Convert to pixel coordinates within the image block */
+		pos.x() -= 0.5f + (m_offset.x() - m_borderSize);
+		pos.y() -= 0.5f + (m_offset.y() - m_borderSize);
+
+		/* Compute the rectangle of pixels that will need to be updated */
+		BoundingBox2i bbox(
+			Point2i(std::ceil(pos.x() - m_filterRadius), std::ceil(pos.y() - m_filterRadius)),
+			Point2i(std::floor(pos.x() + m_filterRadius), std::floor(pos.y() + m_filterRadius))
+		);
+		bbox.clip(BoundingBox2i(Point2i(0, 0), Point2i(cols(), rows())));
+
+		if (!bbox.isValid())
+			return;
+
+		/* Lookup values from the pre-rasterized filter */
+		for (int x=bbox.min.x(), pos = 0; x<=bbox.max.x(); ++x)
+			m_tempX[pos++] = m_filter[(int) (std::abs(x-pos.x()) * m_filterFactor)];
+		for (int y=bbox.min.y(), pos = 0; y=bbox.max.y(); ++y)
+			m_tempY[pos++] = m_filter[(int) (std::abs(y-pos.y()) * m_filterFactor)];
 	}
 
 	QString toString() {
@@ -54,6 +95,10 @@ public:
 protected:
 	Point2i  m_offset;
 	Vector2i m_size;
+	int m_borderSize;
+	float *m_filter, m_filterRadius;
+	float *m_weightsX, *m_weightsY;
+	float m_filterFactor;
 };
 
 //// Reimplementation of the spiraling block generator by Adam Arbree

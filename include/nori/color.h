@@ -46,6 +46,19 @@ public:
 		return *this;
     }
 
+	/// Return a reference to the red channel
+	inline float &r() { return x(); }
+	/// Return a reference to the red channel (const version)
+	inline const float &r() const { return x(); }
+	/// Return a reference to the green channel
+	inline float &g() { return y(); }
+	/// Return a reference to the green channel (const version)
+	inline const float &g() const { return y(); }
+	/// Return a reference to the blue channel
+	inline float &b() { return z(); }
+	/// Return a reference to the blue channel (const version)
+	inline const float &b() const { return z(); }
+
 	/// Convert from sRGB to linear RGB
 	Color3f toLinearRGB() const;
 
