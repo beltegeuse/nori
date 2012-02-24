@@ -47,5 +47,5 @@ win32 {
 }
 
 TARGET = nori
-CONFIG += console 
+CONFIG += console debug
 CONFIG -= app_bundle

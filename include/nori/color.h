@@ -59,6 +59,9 @@ public:
 	/// Return a reference to the blue channel (const version)
 	inline const float &b() const { return z(); }
 
+	/// Check if the color vector contains a NaN/Inf/negative value
+	bool isValid() const;
+
 	/// Convert from sRGB to linear RGB
 	Color3f toLinearRGB() const;
 
@@ -85,6 +88,9 @@ public:
 
 	/// Create an zero value
 	inline Color4f() : Base(0.0f, 0.0f, 0.0f, 0.0f) { }
+
+	/// Create from a 3-channel color
+	inline Color4f(const Color3f &c) : Base(c.r(), c.g(), c.b(), 1.0f) { }
 
 	/// Initialize the color vector with specific per-channel values
 	inline Color4f(float r, float g, float b, float w) : Base(r, g, b, w) { }

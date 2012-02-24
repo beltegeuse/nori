@@ -39,7 +39,7 @@ public:
 	 * The contents will initially be undefined, so make sure
 	 * to call \ref clear() if necessary
 	 */
-	Bitmap(const Vector2i &size) : Base(size.x(), size.y()) { }
+	Bitmap(const Vector2i &size) : Base(size.y(), size.x()) { }
 
 	/// Load an OpenEXR file with the specified filename
 	Bitmap(const QString &filename);

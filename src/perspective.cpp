@@ -34,9 +34,9 @@ class PerspectiveCamera : public Camera {
 public:
 	PerspectiveCamera(const PropertyList &propList) {
 		/* Width and height in pixels. Default: 720p */
-		m_size.x() = propList.getInteger("width", 1280);
-		m_size.y() = propList.getInteger("height", 720);
-		m_invSize = m_size.cast<float>().cwiseInverse();
+		m_outputSize.x() = propList.getInteger("width", 1280);
+		m_outputSize.y() = propList.getInteger("height", 720);
+		m_invOutputSize = m_outputSize.cast<float>().cwiseInverse();
 
 		/* Specifies an optional camera-to-world transformation. Default: none */
 		m_cameraToWorld = propList.getTransform("toWorld", Transform());
@@ -60,7 +60,7 @@ public:
 	}
 
 	void activate() {
-		float aspect = m_size.x() / (float) m_size.y();
+		float aspect = m_outputSize.x() / (float) m_outputSize.y();
 
 		/* Project vectors in camera space onto a plane at z=1:
 		 *
@@ -103,8 +103,8 @@ public:
 		/* Compute the corresponding position on the 
 		   near plane (in local camera space) */
 		Point3f nearP = m_sampleToCamera * Point3f(
-			samplePosition.x() * m_invSize.x(),
-			samplePosition.y() * m_invSize.y(), 0.0f);
+			samplePosition.x() * m_invOutputSize.x(),
+			samplePosition.y() * m_invOutputSize.y(), 0.0f);
 
 		Point3f apertureP(tmp.x(), tmp.y(), 0.0f);
 
@@ -145,7 +145,7 @@ public:
 		return QString(
 			"PerspectiveCamera[\n"
 			"  cameraToWorld = %1,\n"
-			"  size = %2,\n"
+			"  outputSize = %2,\n"
 			"  fov = %3,\n"
 			"  apertureRadius = %4,\n"
 			"  focusDistance = %5,\n"
@@ -153,7 +153,7 @@ public:
 			"  rfilter = %8\n"
 			"]")
 		.arg(indent(m_cameraToWorld.toString(), 18))
-		.arg(m_size.toString())
+		.arg(m_outputSize.toString())
 		.arg(m_fov)
 		.arg(m_apertureRadius)
 		.arg(m_focusDistance)
@@ -162,7 +162,7 @@ public:
 		.arg(indent(m_rfilter->toString()));
 	}
 private:
-	Vector2f m_invSize;
+	Vector2f m_invOutputSize;
 	Transform m_sampleToCamera;
 	Transform m_cameraToWorld;
 	float m_fov;

@@ -40,6 +40,10 @@ public:
 		if (!scene->rayIntersect(ray, its))
 			return Color3f(1.0f);
 
+		Vector3f f = its.shFrame.n.array().abs().matrix();
+		return Color3f(f.x(), f.y(), f.z());
+
+#if 0
 		/* Sample a cosine-weighted direction from the hemisphere (local coordinates) */
 		Vector3f d = squareToCosineHemisphere(sampler->next2D());
 
@@ -54,7 +58,8 @@ public:
 		Ray3f shadowRay(its.p, d, Epsilon, length);
 
 		/* Perform an occlusion test and return one or zero depending on the result */
-		return Color3f(scene->rayIntersect(shadowRay) ? 1.0f : 0.0f);
+		return Color3f(scene->rayIntersect(shadowRay) ? 0.0f : 1.0f);
+#endif
 	}
 
 	QString toString() const {

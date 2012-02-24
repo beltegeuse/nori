@@ -1,6 +1,7 @@
 #include <nori/object.h>
 #include <Eigen/Geometry>
 #include <Eigen/LU>
+#include <boost/math/special_functions/fpclassify.hpp>
 
 #if defined(__linux__)
 #include <malloc.h>
@@ -43,6 +44,17 @@ Color3f Color3f::toLinearRGB() const {
 
 	return result;
 }
+
+bool Color3f::isValid() const {
+	for (int i=0; i<3; ++i) {
+		float value = coeff(i);
+		int cl = boost::math::fpclassify(value);
+		if (value < 0 || cl == FP_INFINITE || cl == FP_NAN)
+			return false;
+	}
+	return true;
+}
+
 
 float Color3f::getLuminance() const {
 	return coeff(0) * 0.212671f + coeff(1) * 0.715160f + coeff(2) * 0.072169f;

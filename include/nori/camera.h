@@ -60,7 +60,7 @@ public:
 		const Point2f &apertureSample) const = 0;
 
 	/// Return the size of the output image in pixels
-	inline const Vector2i &getSize() const { return m_size; }
+	inline const Vector2i &getOutputSize() const { return m_outputSize; }
 
 	/// Return the camera's reconstruction filter in image space
 	inline const ReconstructionFilter *getReconstructionFilter() const { return m_rfilter; }
@@ -71,7 +71,7 @@ public:
 	 * */
 	EClassType getClassType() const { return ECamera; }
 protected:
-	Vector2i m_size;
+	Vector2i m_outputSize;
 	ReconstructionFilter *m_rfilter;
 };
 
