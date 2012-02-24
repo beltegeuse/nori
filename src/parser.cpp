@@ -247,11 +247,11 @@ public:
 						Vector3f up     = parseVector(context.attr.value("up")).normalized();
 
 						Vector3f dir = (target - origin).normalized();
-						Vector3f right = dir.cross(up).normalized();
-						Vector3f newUp = right.cross(dir);
+						Vector3f left = up.normalized().cross(dir);
+						Vector3f newUp = dir.cross(left);
 
 						Eigen::Matrix4f trafo;
-						trafo << right, newUp, dir, origin,
+						trafo << left, newUp, dir, origin,
 							      0, 0, 0, 1;
 
 						m_transform = Eigen::Affine3f(trafo) * m_transform;

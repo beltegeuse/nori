@@ -104,7 +104,7 @@ float Mesh::surfaceArea(uint32_t index) const {
 bool Mesh::rayIntersect(uint32_t index, const Ray3f &ray, float &u, float &v, float &t) const {
 	int i0 = m_indices[3*index],
 		i1 = m_indices[3*index+1],
-		i2 = m_indices[3*index+3];
+		i2 = m_indices[3*index+2];
 
 	const Point3f
 		&p0 = m_vertexPositions[i0],
