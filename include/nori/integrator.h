@@ -23,8 +23,6 @@
 #include <nori/dpdf.h>
 #include <nori/frame.h>
 
-#define NORI_BLOCK_SIZE 32 /* Block size used for parallelization */
-
 NORI_NAMESPACE_BEGIN
 
 /**

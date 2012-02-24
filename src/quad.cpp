@@ -1,7 +1,7 @@
 #include <nori/quad.h>
 #include <boost/bind.hpp>
 
-/**
+/*
  * =======================================================================
  *   WARNING    WARNING    WARNING    WARNING    WARNING    WARNING
  * =======================================================================

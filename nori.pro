@@ -15,6 +15,7 @@ SOURCES += src/common.cpp \
 	src/obj.cpp \
 	src/perspective.cpp \
 	src/rfilter.cpp \
+	src/parallel.cpp \
 	src/bitmap.cpp \
 	src/parser.cpp \
 	src/independent.cpp \
