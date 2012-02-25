@@ -21,14 +21,21 @@
 
 #define EIGEN_NO_DEBUG 
 
+#if defined(_MSC_VER)
+/* Disable some warnings on MSVC++ */
+#pragma warning(disable : 4307) /*  "integral constant overflow" in Eigen */
+#define WIN32_LEAN_AND_MEAN     /* Don't ever include MFC on Windows */
+#define NOMINMAX                /* Don't override min/max */
+#endif
+
 /* Include the basics needed by any Nori file */
 #include <iostream>
 #include <algorithm>
-#include <cmath>
 #include <vector>
 #include <Eigen/Core>
 #include <QString>
 #include <stdint.h>
+#include <ImathPlatform.h>
 
 /* Convenience definitions */
 #define NORI_NAMESPACE_BEGIN namespace nori {
@@ -37,20 +44,14 @@
 /* "Ray epsilon": relative error threshold for ray intersection computations */
 #define Epsilon 1e-4f
 
-/* A few other constants */
-#ifndef M_E
-#define M_E          2.71828182845904523536f
-#endif
-#ifndef M_PI
-#define M_PI         3.14159265358979323846f
-#endif
+/* A few useful constants */
 #define INV_PI       0.31830988618379067154f
 #define INV_TWOPI    0.15915494309189533577f
 #define INV_FOURPI   0.07957747154594766788f
 #define SQRT_TWO     1.41421356237309504880f
 #define INV_SQRT_TWO 0.70710678118654752440f
 
-/* Some optimization-related macros */
+/* Optimization-related macros */
 #if defined(__GNUC__)
 #define EXPECT_TAKEN(a)        __builtin_expect(a, true)
 #define EXPECT_NOT_TAKEN(a)    __builtin_expect(a, false)
@@ -58,8 +59,20 @@
 #define __restrict             __restrict__
 #endif
 #else
-#define EXPECT_TAKEN(a)        
-#define EXPECT_NOT_TAKEN(a)    
+#define EXPECT_TAKEN(a)        a
+#define EXPECT_NOT_TAKEN(a)    a
+#endif
+
+/* MSVC is missing a few C99 functions */
+#if defined(_MSC_VER)
+	/// No nextafterf()! -- an implementation is provided in support_win32.cpp
+	extern float nextafterf(float x, float y);
+		
+	/// Emulate sincosf using sinf() and cosf()
+	inline void sincosf(float theta, float *_sin, float *_cos) {
+		*_sin = sinf(theta);
+		*_cos = cosf(theta);
+	}
 #endif
 
 NORI_NAMESPACE_BEGIN
@@ -197,26 +210,13 @@ extern Point2f squareToUniformDiskConcentric(const Point2f &sample);
 extern Point2f squareToUniformTriangle(const Point2f &sample);
 
 /// Compute a direction for the given coordinates in spherical coordinates
-Vector3f sphericalDirection(float theta, float phi);
+extern Vector3f sphericalDirection(float theta, float phi);
 
 /// Compute a direction for the given coordinates in spherical coordinates
-Point2f sphericalCoordinates(const Vector3f &dir);
+extern Point2f sphericalCoordinates(const Vector3f &dir);
 
 /// Indent a complete string (except for the first line) by the requested number of spaces
-QString indent(const QString &string, int amount = 2);
-
-#if defined(_GNU_SOURCE)
-	/// Convenience function for computing a sine and cosine at once
-	inline void sincosf(float theta, float *sin, float *cos) {
-		::sincosf(theta, sin, cos);
-	}
-#else /* Uh oh -- no C99 support on MSVC++ */
-	/// Convenience function for computing a sine and cosine at once
-	inline void sincosf(float theta, float *_sin, float *_cos) {
-		*_sin = sinf(theta);
-		*_cos = cosf(theta);
-	}
-#endif
+extern QString indent(const QString &string, int amount = 2);
 
 /// Allocate an aligned region of memory
 extern void *allocAligned(size_t size);

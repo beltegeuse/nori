@@ -2,3 +2,9 @@
 /nori
 /include/boost
 /Makefile
+/nori.opensdf
+/nori.sdf
+/nori.sln
+/nori.suo
+/nori.vcxproj*
+/vc100.pdb

@@ -89,7 +89,7 @@ public:
 	inline SizeType getPrimitiveCount() const { return m_primitiveCount; }
 
 	/// Return the total number of meshes registered with the kd-tree
-	inline SizeType getMeshCount() const { return m_meshes.size(); }
+	inline SizeType getMeshCount() const { return (SizeType) m_meshes.size(); }
 
 	/// Return one of the registered meshes
 	inline Mesh *getMesh(IndexType idx) { return m_meshes[idx]; }

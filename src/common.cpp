@@ -7,6 +7,10 @@
 #include <malloc.h>
 #endif
 
+#if defined(WIN32)
+#include <windows.h>
+#endif
+
 #if !defined(L1_CACHE_LINE_SIZE)
 #define L1_CACHE_LINE_SIZE 64
 #endif
@@ -73,7 +77,7 @@ Vector3f squareToUniformSphere(const Point2f &sample) {
 	float z = 1.0f - 2.0f * sample.y();
 	float r = std::sqrt(std::max((float) 0.0f, 1.0f - z*z));
 	float sinPhi, cosPhi;
-	nori::sincosf(2.0f * M_PI * sample.x(), &sinPhi, &cosPhi);
+	sincosf(2.0f * M_PI * sample.x(), &sinPhi, &cosPhi);
 	return Vector3f(r * cosPhi, r * sinPhi, z);
 }
 
@@ -82,7 +86,7 @@ Vector3f squareToUniformHemisphere(const Point2f &sample) {
 	float tmp = std::sqrt(std::min((float) 0, 1-z*z));
 
 	float sinPhi, cosPhi;
-	nori::sincosf(2.0f * M_PI * sample.y(), &sinPhi, &cosPhi);
+	sincosf(2.0f * M_PI * sample.y(), &sinPhi, &cosPhi);
 
 	return Vector3f(cosPhi * tmp, sinPhi * tmp, z);
 }
@@ -98,7 +102,7 @@ Vector3f squareToCosineHemisphere(const Point2f &sample) {
 Point2f squareToUniformDisk(const Point2f &sample) {
 	float r = std::sqrt(sample.x());
 	float sinPhi, cosPhi;
-	nori::sincosf(2.0f * M_PI * sample.y(), &sinPhi, &cosPhi);
+	sincosf(2.0f * M_PI * sample.y(), &sinPhi, &cosPhi);
 
 	return Point2f(
 		cosPhi * r,
@@ -131,7 +135,7 @@ Point2f squareToUniformDiskConcentric(const Point2f &sample) {
 	}
 
 	Point2f result;
-	nori::sincosf(coords.y(), &result[1], &result[0]);
+	sincosf(coords.y(), &result[1], &result[0]);
 	return result*coords.x();
 }
 
@@ -143,8 +147,8 @@ Point2f squareToTriangle(const Point2f &sample) {
 Vector3f sphericalDirection(float theta, float phi) {
 	float sinTheta, cosTheta, sinPhi, cosPhi;
 
-	nori::sincosf(theta, &sinTheta, &cosTheta);
-	nori::sincosf(phi, &sinPhi, &cosPhi);
+	sincosf(theta, &sinTheta, &cosTheta);
+	sincosf(phi, &sinPhi, &cosPhi);
 
 	return Vector3f(
 		sinTheta * cosPhi,

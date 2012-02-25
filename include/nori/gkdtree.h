@@ -882,7 +882,7 @@ protected:
 
 		/* Establish an ad-hoc depth cutoff value (Formula from PBRT) */
 		if (m_maxDepth == 0)
-			m_maxDepth = (int) (8 + 1.3f * std::log(primCount)/std::log(2));
+			m_maxDepth = (int) (8 + 1.3f * std::log((float) primCount)/std::log(2.0f));
 		m_maxDepth = std::min(m_maxDepth, (SizeType) NORI_KD_MAXDEPTH);
 
 		OrderedChunkAllocator &leftAlloc = ctx.leftAlloc;
@@ -2237,7 +2237,7 @@ protected:
 			 *
 			 * candidate.pos = m_bbox.min[axis] + (leftBin+1) * m_binSize[axis];
 			 *
-			 * can potentially lead to a slightly different number primitives being
+			 * can potentially lead to a slightly different number of primitives being
 			 * classified to the left and right if we were to do check each
 			 * primitive against this split position. We can't have that, however,
 			 * since the partitioning code assumes that these numbers are correct.

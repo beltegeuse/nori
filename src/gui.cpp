@@ -30,6 +30,10 @@ using namespace nori;
 	}
 #endif
 
+#if !defined(GL_RGBA32F_ARB)
+	#define GL_RGBA32F_ARB 0x8814
+#endif
+
 class PreviewWidget : public QGLWidget {
 public:
 	PreviewWidget(QWidget *parent, const ImageBlock *output)

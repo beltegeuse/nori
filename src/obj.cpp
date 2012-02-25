@@ -106,8 +106,8 @@ public:
 			}
 		}
 
-		m_triangleCount = indices.size() / 3;
-		m_vertexCount = vertices.size();
+		m_triangleCount = (uint32_t) (indices.size() / 3);
+		m_vertexCount = (uint32_t) vertices.size();
 
 		cout << "Read " << m_triangleCount << " triangles and "
 			 << m_vertexCount << " vertices." << endl;
