@@ -15,7 +15,7 @@ SOURCES += src/common.cpp \
 	src/obj.cpp \
 	src/perspective.cpp \
 	src/rfilter.cpp \
-	src/parallel.cpp \
+	src/block.cpp \
 	src/bitmap.cpp \
 	src/parser.cpp \
 	src/independent.cpp \
@@ -35,7 +35,7 @@ DESTDIR = .
 QT += xml xmlpatterns opengl
 
 macx | unix {
-	QMAKE_CXXFLAGS_RELEASE -= -O2
+	QMAKE_CXXFLAGS_RELEASE -= -O2 
 	QMAKE_CXXFLAGS += -O3 -march=nocona -msse2 -mfpmath=sse -fstrict-aliasing
 	QMAKE_LIBPATH += /usr/local/lib
 	INCLUDEPATH += /usr/include/OpenEXR /usr/local/include/OpenEXR

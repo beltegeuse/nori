@@ -162,18 +162,18 @@ protected:
  * blocks to be rendered), processing it, and writing the output
  * to a target buffer.
  */
-class RenderThread : public QThread {
+class BlockRenderThread : public QThread {
 public:
 	/**
 	 * \brief Create a new rendering thread that fetches blocks from
 	 * the specified block generator and writes output to a big
 	 * \ref ImageBlock instance that represents the entire image
 	 */
-	RenderThread(const Scene *scene, Sampler *sampler,
+	BlockRenderThread(const Scene *scene, Sampler *sampler,
 		BlockGenerator *blockGenerator, ImageBlock *output);
 
 	/// Release all memory
-	virtual ~RenderThread();
+	virtual ~BlockRenderThread();
 
 	/// Main rendering thread loop
 	void run();

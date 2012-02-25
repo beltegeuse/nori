@@ -17,7 +17,7 @@
 */
 
 #include <nori/integrator.h>
-#include <nori/parallel.h>
+#include <nori/block.h>
 #include <nori/scene.h>
 #include <nori/camera.h>
 #include <nori/bitmap.h>
@@ -35,11 +35,11 @@ void Integrator::render(const Scene *scene, Sampler *sampler) {
 	ImageBlock result(outputSize, camera->getReconstructionFilter());
 
 	int nCores = getCoreCount();
-	std::vector<RenderThread *> threads;
+	std::vector<BlockRenderThread *> threads;
 
 	/* Launch render threads */
 	for (int i=0; i<nCores; ++i) {
-		RenderThread *thread = new RenderThread(scene, sampler, &blockGenerator, &result);
+		BlockRenderThread *thread = new BlockRenderThread(scene, sampler, &blockGenerator, &result);
 		thread->start();
 		threads.push_back(thread);
 	}

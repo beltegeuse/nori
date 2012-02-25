@@ -16,8 +16,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <boost/scoped_ptr.hpp>
-#include <nori/parallel.h>
+#include <nori/block.h>
 #include <nori/bitmap.h>
 #include <nori/rfilter.h>
 #include <nori/scene.h>
@@ -40,8 +39,8 @@ ImageBlock::ImageBlock(const Vector2i &size, const ReconstructionFilter *filter)
 	}
 	m_filter[NORI_FILTER_RESOLUTION] = 0.0f;
 	m_lookupFactor = NORI_FILTER_RESOLUTION / m_filterRadius;
-	m_weightsX = new float[(size_t) std::ceil(2*m_filterRadius)];
-	m_weightsY = new float[(size_t) std::ceil(2*m_filterRadius)];
+	m_weightsX = new float[(int) std::ceil(2*m_filterRadius) + 1];
+	m_weightsY = new float[(int) std::ceil(2*m_filterRadius) + 1];
 
 	/* Allocate space for pixels and border regions */
 	resize(size.y() + 2*m_borderSize, size.x() + 2*m_borderSize);
@@ -158,18 +157,18 @@ bool BlockGenerator::next(ImageBlock &block) {
 	return true;
 }
 
-RenderThread::RenderThread(const Scene *scene, Sampler *sampler, 
+BlockRenderThread::BlockRenderThread(const Scene *scene, Sampler *sampler, 
 		BlockGenerator *blockGenerator, ImageBlock *output) 
 	 : m_scene(scene), m_blockGenerator(blockGenerator), m_output(output) {
 	/* Create a new sample generator for the current thread */
 	m_sampler = sampler->clone();
 }
 
-RenderThread::~RenderThread() {
+BlockRenderThread::~BlockRenderThread() {
 	delete m_sampler;
 }
 
-void RenderThread::run() {
+void BlockRenderThread::run() {
 	try {
 		const Integrator *integrator = m_scene->getIntegrator();
 		const Camera *camera = m_scene->getCamera();
