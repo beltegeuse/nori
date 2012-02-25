@@ -36,8 +36,8 @@ DESTDIR = .
 QT += xml xmlpatterns opengl
 
 macx {
-	SOURCES += src/support_osx.m
-	LIBS += -framework Cocoa -lobjc
+	OBJECTIVE_SOURCES += src/support_osx.m
+	QMAKE_LFLAGS += -framework Cocoa -lobjc
 }
 
 macx | unix {

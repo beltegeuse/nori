@@ -50,6 +50,16 @@ struct Intersection {
 	/// Create an uninitialized intersection record
 	inline Intersection() : mesh(NULL) { }
 
+	/// Transform a direction vector into the local shading frame
+	inline Vector3f toLocal(const Vector3f &d) const {
+		return shFrame.toLocal(d);
+	}
+
+	/// Transform a direction vector from local to world coordinates
+	inline Vector3f toWorld(const Vector3f &d) const {
+		return shFrame.toWorld(d);
+	}
+
 	/// Return a human-readable summary of the intersection record
 	QString toString() const;
 };
