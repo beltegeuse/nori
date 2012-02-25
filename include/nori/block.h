@@ -27,6 +27,7 @@
 #include <nori/vector.h>
 #include <QMutex>
 #include <QThread>
+#include <QElapsedTimer>
 
 #define NORI_BLOCK_SIZE 32 /* Block size used for parallelization */
 
@@ -87,19 +88,22 @@ public:
 	/// Clear all contents
 	void clear() { setConstant(Color4f()); }
 
-	/**
-	 * \brief Record a sample with the given position and radiance value
-	 *
-	 * This function is (intentionally) not thread-safe
-	 */
+	/// Record a sample with the given position and radiance value
 	void put(const Point2f &pos, const Color3f &value);
 
 	/**
 	 * \brief Merge another image block into this one
 	 *
-	 * This function is thread-safe
+	 * During the merge operation, this function locks 
+	 * the destination block using a mutex.
 	 */
 	void put(ImageBlock &b);
+
+	/// Lock the image block (using an internal mutex)
+	inline void lock() const { m_mutex.lock(); }
+	
+	/// Unlock the image block
+	inline void unlock() const { m_mutex.unlock(); }
 
 	/// Return a human-readable string summary
 	QString toString() const;
@@ -110,7 +114,7 @@ protected:
 	float *m_filter, m_filterRadius;
 	float *m_weightsX, *m_weightsY;
 	float m_lookupFactor;
-	QMutex m_mutex;
+	mutable QMutex m_mutex;
 };
 
 /**
@@ -152,6 +156,7 @@ protected:
 	int m_stepsLeft;
 	int m_direction;
 	QMutex m_mutex;
+	QElapsedTimer m_timer;
 };
 
 /**

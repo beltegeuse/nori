@@ -80,11 +80,6 @@ public:
 		m_tags["lookat"]     = ELookAt;
 	}
 
-	virtual ~NoriParser() {
-		if (m_root)
-			delete m_root;
-	}
-
 	struct ParserContext {
 		QXmlAttributes attr;
 		PropertyList propList;
@@ -160,6 +155,8 @@ public:
 			/* Add it to its parent, if there is one */
 			if (m_context.size() >= 2)
 				m_context[m_context.size() - 2].children.push_back(obj);
+			else
+				m_root = obj;
 		} else {
 			/* This is a property */
 			PropertyList &propList = m_context[m_context.size() - 2].propList;

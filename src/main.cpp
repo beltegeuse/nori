@@ -17,12 +17,70 @@
 */
 
 #include <nori/parser.h>
+#include <nori/scene.h>
+#include <nori/camera.h>
+#include <nori/block.h>
+#include <nori/bitmap.h>
+#include <nori/integrator.h>
+#include <nori/gui.h>
 #include <boost/scoped_ptr.hpp>
+#include <QFileInfo>
+#include <QDir>
 #include <QApplication>
+	
+using namespace nori;
+
+void render(Scene *scene, const QString &filename) {
+	const Camera *camera = scene->getCamera();
+	Vector2i outputSize = camera->getOutputSize();
+
+	/* Create a block generator (i.e. a work scheduler) */
+	BlockGenerator blockGenerator(outputSize, NORI_BLOCK_SIZE);
+
+	/* Allocate memory for the entire output image */
+	ImageBlock result(outputSize, camera->getReconstructionFilter());
+	result.clear();
+
+	/* Launch the GUI */
+	NoriWindow window(&result);
+
+	/* Launch one render thread per core */
+	int nCores = getCoreCount();
+	std::vector<BlockRenderThread *> threads;
+	for (int i=0; i<nCores; ++i) {
+		BlockRenderThread *thread = new BlockRenderThread(
+			scene, scene->getSampler(), &blockGenerator, &result);
+		thread->start();
+		threads.push_back(thread);
+	}
+		
+	window.startRefresh();
+	qApp->exec();
+	window.stopRefresh();
+
+	/* Wait for them to finish */
+	for (int i=0; i<nCores; ++i) {
+		threads[i]->wait();
+		delete threads[i];
+	}
+
+	/* Now turn the rendered image block into 
+	   a properly normalized bitmap */
+	Bitmap *bitmap = result.toBitmap();
+
+	/* Determine the filename of the output bitmap */
+	QFileInfo inputInfo(filename);
+	QString outputName = inputInfo.path() 
+		+ QDir::separator() 
+		+ inputInfo.completeBaseName() + ".exr";
+
+	/* Save using the OpenEXR format */
+	bitmap->save(outputName);
+
+	delete bitmap;
+}
 
 int main(int argc, char **argv) {
-	using namespace nori;
-	
 	QApplication app(argc, argv);
 	Q_INIT_RESOURCE(resources);
 
@@ -32,8 +90,12 @@ int main(int argc, char **argv) {
 			return -1;
 		}
 
-		boost::scoped_ptr<NoriObject> scene(loadScene(argv[1]));
+		boost::scoped_ptr<NoriObject> root(loadScene(argv[1]));
 
+		if (root->getClassType() == NoriObject::EScene) {
+			/* The root object is a scene! Start rendering it.. */
+			render(static_cast<Scene *>(root.get()), argv[1]);
+		}
 	} catch (const NoriException &ex) {
 		cerr << "Caught a critical exception: " << qPrintable(ex.getReason()) << endl;
 		return -1;

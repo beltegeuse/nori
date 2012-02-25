@@ -4,7 +4,6 @@ SOURCES += src/common.cpp \
 	src/diffuse.cpp \
 	src/microfacet.cpp \
 	src/scene.cpp \
-	src/integrator.cpp \
 	src/random.cpp \
 	src/quad.cpp \
 	src/ao.cpp \
@@ -19,9 +18,11 @@ SOURCES += src/common.cpp \
 	src/bitmap.cpp \
 	src/parser.cpp \
 	src/independent.cpp \
-	src/main.cpp
+	src/main.cpp \
+	src/gui.cpp
 
-HEADERS += include/nori/common.h
+HEADERS += include/nori/*.h
+
 RESOURCES += data/resources.qrc
 
 INCLUDEPATH += include
@@ -33,6 +34,11 @@ UI_DIR = build
 DESTDIR = .
 
 QT += xml xmlpatterns opengl
+
+macx {
+	SOURCES += src/support_osx.m
+	LIBS += -framework Cocoa -lobjc
+}
 
 macx | unix {
 	QMAKE_CXXFLAGS_RELEASE -= -O2 
@@ -48,5 +54,5 @@ win32 {
 }
 
 TARGET = nori
-CONFIG += console debug
+CONFIG += console 
 CONFIG -= app_bundle

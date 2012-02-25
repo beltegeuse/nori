@@ -93,12 +93,10 @@ void ImageBlock::put(const Point2f &_pos, const Color3f &value) {
 }
 	
 void ImageBlock::put(ImageBlock &b) {
-	m_mutex.lock();
 	Vector2i offset = b.getOffset() - m_offset;
 	Vector2i size   = b.getSize()   + Vector2i(2*b.getBorderSize());
 	block(offset.y(), offset.x(), size.y(), size.x()) 
 		+= b.topLeftCorner(size.y(), size.x());
-	m_mutex.unlock();
 }
 
 QString ImageBlock::toString() const {
@@ -117,6 +115,7 @@ BlockGenerator::BlockGenerator(const Vector2i &size, int blockSize)
 	m_block = Point2i(m_numBlocks / 2);
 	m_stepsLeft = 1;
 	m_numSteps = 1;
+	m_timer.start();
 }
 
 bool BlockGenerator::next(ImageBlock &block) {
@@ -132,6 +131,7 @@ bool BlockGenerator::next(ImageBlock &block) {
 	block.setSize((m_size - pos).cwiseMin(Vector2i::Constant(m_blockSize)));
 
 	if (--m_blocksLeft == 0) {
+		cout << "Rendering finished (took " << m_timer.elapsed() << " ms)" << endl;
 		m_mutex.unlock();
 		return true;
 	}

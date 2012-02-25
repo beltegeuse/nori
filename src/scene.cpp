@@ -51,9 +51,7 @@ void Scene::activate() {
 
 	cout << endl;
 	cout << "Configuration: " << qPrintable(toString()) << endl;
-
-	/* Start rendering! */
-	m_integrator->render(this, m_sampler);
+	cout << endl;
 }
 
 void Scene::addChild(NoriObject *obj) {

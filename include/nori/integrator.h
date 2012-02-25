@@ -54,13 +54,6 @@ public:
 	virtual Color3f Li(const Scene *scene, Sampler *sampler, const Ray3f &ray) const = 0;
 
 	/**
-	 * \brief Render the scene
-	 *
-	 * The default implementation splits up the image into tiles
-	 * and assigns them to separate threads
-	 */
-	virtual void render(const Scene *scene, Sampler *sampler);
-	/**
 	 * \brief Return the type of object (i.e. Mesh/BSDF/etc.) 
 	 * provided by this instance
 	 * */

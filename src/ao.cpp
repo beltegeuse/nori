@@ -31,14 +31,14 @@ public:
 	AmbientOcclusion(const PropertyList &propList) {
 		/* Ray length of the ambient occlusion queries;
 		   expressed relative to the scene size */
-		m_length = propList.getFloat("length", 0.05f);
+		m_length = propList.getFloat("length", 0.1f);
 	}
 
 	Color3f Li(const Scene *scene, Sampler *sampler, const Ray3f &ray) const {
 		/* Find the surface that is visible in the requested direction */
 		Intersection its;
 		if (!scene->rayIntersect(ray, its))
-			return Color3f(1.0f);
+			return Color3f(0.0f);
 
 		/* Sample a cosine-weighted direction from the hemisphere (local coordinates) */
 		Vector3f d = squareToCosineHemisphere(sampler->next2D());
