@@ -73,6 +73,14 @@ template <typename _PointType, typename _VectorType> struct TRay {
 	/// Return the position of a point along the ray
 	inline PointType operator() (Scalar t) const { return o + t * d; }
 
+	/// Return a ray that points into the opposite direction
+	inline Ray3f reverse() const {
+		Ray3f result;
+		result.o = o; result.d = -d; result.dRcp = -dRcp;
+		result.mint = mint; result.maxt = maxt;
+		return result;
+	}
+
 	/// Return a human-readable string summary of this ray
 	inline QString toString() const {
 		return QString(

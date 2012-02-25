@@ -140,6 +140,9 @@ public:
 	/// Return a pointer to the triangle vertex index list
 	inline const uint32_t *getIndices() const { return m_indices; }
 
+	/// Return a pointer to the BSDF associated with this mesh
+	inline const BSDF *getBSDF() const { return m_bsdf; }
+
 	/// Register a child object (e.g. a BSDF) with the mesh
 	virtual void addChild(NoriObject *child);
 
