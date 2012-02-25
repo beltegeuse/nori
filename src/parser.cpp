@@ -99,7 +99,7 @@ public:
 	Vector3f parseVector(const QString &str) const {
 		QStringList list = str.split(", ");
 		if (list.size() != 3)
-			throw NoriException(QString("Cannot parse 3-vector '%s'!").arg(str));
+			throw NoriException(QString("Cannot parse 3-vector '%1'!").arg(str));
 						
 		Vector3f result;
 		for (int i=0; i<3; ++i)
