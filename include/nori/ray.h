@@ -49,6 +49,12 @@ template <typename _PointType, typename _VectorType> struct TRay {
 	/// Construct a new ray
 	inline TRay() : mint(Epsilon), 
 		maxt(std::numeric_limits<Scalar>::infinity()) { }
+	
+	/// Construct a new ray
+	inline TRay(const PointType &o, const VectorType &d) : o(o), d(d), 
+			mint(Epsilon), maxt(std::numeric_limits<Scalar>::infinity()) {
+		update();
+	}
 
 	/// Construct a new ray
 	inline TRay(const PointType &o, const VectorType &d, 

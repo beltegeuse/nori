@@ -50,9 +50,11 @@ void Mesh::activate() {
 		m_distr.append(surfaceArea(i));
 	m_distr.normalize();
 
-	/* If no material was assigned, instantiate a diffuse BRDF */
-	m_bsdf = static_cast<BSDF *>(
-		NoriObjectFactory::createInstance("diffuse", PropertyList()));
+	if (!m_bsdf) {
+		/* If no material was assigned, instantiate a diffuse BRDF */
+		m_bsdf = static_cast<BSDF *>(
+			NoriObjectFactory::createInstance("diffuse", PropertyList()));
+	}
 }
 
 void Mesh::samplePosition(const Point2f &_sample, Point3f &p, Normal3f &n) const {
