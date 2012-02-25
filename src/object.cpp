@@ -27,6 +27,7 @@ void NoriObject::addChild(NoriObject *) {
 }
 
 void NoriObject::activate() { /* Do nothing */ }
+void NoriObject::setParent(NoriObject *parent) { /* Do nothing */ }
 
 std::map<QString, NoriObjectFactory::Constructor> *NoriObjectFactory::m_constructors = NULL;
 

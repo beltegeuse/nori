@@ -56,8 +56,11 @@ void Scene::activate() {
 
 void Scene::addChild(NoriObject *obj) {
 	switch (obj->getClassType()) {
-		case EMesh:
-			m_kdtree->addMesh(static_cast<Mesh *>(obj));
+		case EMesh: {
+				Mesh *mesh = static_cast<Mesh *>(obj);
+				m_kdtree->addMesh(mesh);
+				m_meshes.push_back(mesh);
+			}
 			break;
 
 		case ESampler:
@@ -85,15 +88,25 @@ void Scene::addChild(NoriObject *obj) {
 }
 
 QString Scene::toString() const {
+	QString meshes;
+	for (size_t i=0; i<m_meshes.size(); ++i) {
+		meshes += QString("  ") + indent(m_meshes[i]->toString(), 2);
+		if (i + 1 < m_meshes.size())
+			meshes += ",";
+		meshes += "\n";
+	}
 	return QString(
 		"Scene[\n"
 		"  integrator = %1,\n"
-		"  camera = %2,\n"
-		"  sampler = %3\n"
+		"  sampler = %2\n"
+		"  camera = %3,\n"
+		"  meshes = {\n"
+		"  %4}\n"
 		"]")
 	.arg(indent(m_integrator->toString()))
+	.arg(indent(m_sampler->toString()))
 	.arg(indent(m_camera->toString()))
-	.arg(indent(m_sampler->toString()));
+	.arg(indent(meshes, 2));
 }
 
 NORI_REGISTER_CLASS(Scene, "scene");

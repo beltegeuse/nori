@@ -245,11 +245,13 @@ QString Mesh::toString() const {
 		"Mesh[\n"
 		"  name = \"%1\",\n"
 		"  vertexCount = %2,\n"
-		"  triangleCount = %3\n"
+		"  triangleCount = %3,\n"
+		"  bsdf = %4\n"
 		"]")
 	.arg(m_name)
 	.arg(m_vertexCount)
-	.arg(m_triangleCount);
+	.arg(m_triangleCount)
+	.arg(indent(m_bsdf->toString()));
 }
 
 QString Intersection::toString() const {

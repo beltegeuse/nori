@@ -146,8 +146,10 @@ public:
 				.arg(obj->toString()));
 
 			/* Add all children */
-			for (size_t i=0; i<context.children.size(); ++i)
+			for (size_t i=0; i<context.children.size(); ++i) {
 				obj->addChild(context.children[i]);
+				context.children[i]->setParent(obj);
+			}
 
 			/* Activate / configure the object */
 			obj->activate();

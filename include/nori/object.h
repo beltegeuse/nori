@@ -61,7 +61,16 @@ public:
 	 * simply throws an exception
 	 */
 	virtual void addChild(NoriObject *child);
-	
+
+	/**
+	 * \brief Set the parent object
+	 *
+	 * Subclasses may choose to override this method to be
+	 * notified when they are added to a parent object. The
+	 * default implementation does nothing.
+	 */
+	virtual void setParent(NoriObject *parent);
+
 	/**
 	 * \brief Perform some action associated with the object
 	 *
