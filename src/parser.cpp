@@ -97,7 +97,8 @@ public:
 	}
 
 	Vector3f parseVector(const QString &str) const {
-		QStringList list = str.split(", ");
+		QRegExp re("[\\s,]+");
+		QStringList list = str.split(re);
 		if (list.size() != 3)
 			throw NoriException(QString("Cannot parse 3-vector '%1'!").arg(str));
 						
