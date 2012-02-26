@@ -44,7 +44,7 @@ public:
 		Vector3f d = squareToCosineHemisphere(sampler->next2D());
 
 		/* Use the shading frame at "its" to convert it to world coordinates */
-		d = its.shFrame.toWorld(d);
+		d = its.toWorld(d);
 
 		/* Determine the length of the "shadow ray" based on the scene size
 		   and the configuration options */
