@@ -67,7 +67,9 @@
 #if defined(_MSC_VER)
 	/// No nextafterf()! -- an implementation is provided in support_win32.cpp
 	extern float nextafterf(float x, float y);
-		
+#endif
+
+#if !defined(_GNU_SOURCE)
 	/// Emulate sincosf using sinf() and cosf()
 	inline void sincosf(float theta, float *_sin, float *_cos) {
 		*_sin = sinf(theta);
