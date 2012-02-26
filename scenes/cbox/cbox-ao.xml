@@ -36,10 +36,6 @@
 		<bsdf type="diffuse">
 			<color name="albedo" value="0.78, 0.78, 0.78"/>
 		</bsdf>
-		<luminaire type="area">
-			<color name="radiance" value="15, 15, 15"/>
-			<!-- original tungsten color is "17, 11.8, 4"-->
-		</luminaire>
 	</mesh>
 
 	<mesh type="obj">

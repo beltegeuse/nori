@@ -19,16 +19,12 @@
 		<integer name="height" value="512"/>
 	</camera>
 
-	<!-- distant light to provide overall illumination -->
 	<mesh type="obj">
 		<string name="filename" value="sphere.obj"/>
 		<transform name="toWorld">
 			<scale value="0.5, 0.5, 0.5"/>
 			<translate value="10, 10, 4"/>
 		</transform>
-		<luminaire type="area">
-			<color name="radiance" value="800, 800, 800"/>
-		</luminaire>
 		<bsdf type="diffuse">
 			<color name="reflectance" value="0,0,0"/>
 		</bsdf>
@@ -40,9 +36,6 @@
 			<scale value="0.1, 0.1, 0.1"/>
 			<translate value="-1.25, 0, 0"/>
 		</transform>
-		<luminaire type="area">
-			<color name="radiance" value="100, 100, 100"/>
-		</luminaire>
 		<bsdf type="diffuse">
 			<color name="reflectance" value="0,0,0"/>
 		</bsdf>
@@ -54,9 +47,6 @@
 			<scale value="0.03333, 0.03333, 0.03333"/>
 			<translate value="-3.75, 0, 0"/>
 		</transform>
-		<luminaire type="area">
-			<color name="radiance" value="901.803, 901.803, 901.803"/>
-		</luminaire>
 		<bsdf type="diffuse">
 			<color name="reflectance" value="0,0,0"/>
 		</bsdf>
@@ -68,9 +58,6 @@
 			<scale value="0.3, 0.3, 0.3"/>
 			<translate value="1.25, 0, 0"/>
 		</transform>
-		<luminaire type="area">
-			<color name="radiance" value="11.1111, 11.1111, 11.1111"/>
-		</luminaire>
 		<bsdf type="diffuse">
 			<color name="reflectance" value="0,0,0"/>
 		</bsdf>
@@ -82,9 +69,6 @@
 			<scale value="0.9, 0.9, 0.9"/>
 			<translate value="3.75, 0, 0"/>
 		</transform>
-		<luminaire type="area">
-			<color name="radiance" value="1.23457, 1.23457, 1.23457"/>
-		</luminaire>
 		<bsdf type="diffuse">
 			<color name="reflectance" value="0,0,0"/>
 		</bsdf>
