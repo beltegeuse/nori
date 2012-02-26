@@ -50,8 +50,8 @@ macx | unix {
 
 win32 {
 	# You will have to update the following two lines based on where you have installed OpenEXR
-	QMAKE_LIBDIR += openexr/lib
-	INCLUDEPATH += openexr/include/OpenEXR
+	QMAKE_LIBDIR += openexr/lib/x64
+	INCLUDEPATH += openexr/include
 
 	QMAKE_CXXFLAGS += /O2 /fp:fast /GS- /GL /D_SCL_SECURE_NO_WARNINGS /D_CRT_SECURE_NO_WARNINGS
 	QMAKE_LDFLAGS += /LTCG
