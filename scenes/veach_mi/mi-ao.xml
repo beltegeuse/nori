@@ -11,6 +11,7 @@
 
 	<camera type="perspective">
 		<transform name="toWorld">
+			<scale value="-1,1,1"/>
 			<lookat origin="0, 6, 27.5" target="0, -1.5, 2.5" up="0, 1, 0"/>
 		</transform>
 		<float name="fov" value="25"/>
