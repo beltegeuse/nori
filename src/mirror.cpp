@@ -26,12 +26,12 @@ class Mirror : public BSDF {
 public:
 	Mirror(const PropertyList &propList) { }
 
-	Color3f eval(const BSDFQueryRecord &bRec) const {
+	Color3f eval(const BSDFQueryRecord &) const {
 		/* Discrete BRDFs always evaluate to zero in Nori */
 		return Color3f(0.0f);
 	}
 
-	float pdf(const BSDFQueryRecord &bRec) const {
+	float pdf(const BSDFQueryRecord &) const {
 		/* Discrete BRDFs always evaluate to zero in Nori */
 		return 0.0f;
 	}
