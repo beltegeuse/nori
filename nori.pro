@@ -17,6 +17,7 @@ SOURCES += src/common.cpp \
 	src/block.cpp \
 	src/bitmap.cpp \
 	src/parser.cpp \
+	src/mirror.cpp \
 	src/independent.cpp \
 	src/main.cpp \
 	src/gui.cpp
