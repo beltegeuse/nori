@@ -89,6 +89,22 @@ protected:
 	float m_B, m_C;
 };
 
+/// Tent filter 
+class TentFilter : public ReconstructionFilter {
+public:
+	TentFilter(const PropertyList &) {
+		m_radius = 1.0f;
+	}
+
+	float eval(float x) const {
+		return std::max(0.0f, 1.0f - x);
+	}
+	
+	QString toString() const {
+		return "TentFilter[]";
+	}
+};
+
 /// Box filter -- fastest, but prone to aliasing
 class BoxFilter : public ReconstructionFilter {
 public:
@@ -107,6 +123,7 @@ public:
 
 NORI_REGISTER_CLASS(GaussianFilter, "gaussian");
 NORI_REGISTER_CLASS(MitchellNetravaliFilter, "mitchell");
+NORI_REGISTER_CLASS(TentFilter, "tent");
 NORI_REGISTER_CLASS(BoxFilter, "box");
 
 NORI_NAMESPACE_END
