@@ -33,9 +33,9 @@ Bitmap::Bitmap(const QString &filename) {
 	const Imf::ChannelList &channels = header.channels();
 
 	Imath::Box2i dw = file.header().dataWindow();
-	resize(dw.max.x - dw.min.x + 1, dw.max.y - dw.min.y + 1);
+	resize(dw.max.y - dw.min.y + 1, dw.max.x - dw.min.x + 1);
 
-	cout << "Reading a " << rows() << "x" << cols() 
+	cout << "Reading a " << cols() << "x" << rows() 
 		 << " OpenEXR file from \"" << qPrintable(filename) << "\"" << endl;
 	
 	const char *ch_r = NULL, *ch_g = NULL, *ch_b = NULL;
@@ -77,7 +77,7 @@ Bitmap::Bitmap(const QString &filename) {
 }
 
 void Bitmap::save(const QString &filename) {
-	cout << "Writing a " << rows() << "x" << cols() 
+	cout << "Writing a " << cols() << "x" << rows() 
 		 << " OpenEXR file to \"" << qPrintable(filename) << "\"" << endl;
 
 	Imf::Header header(cols(), rows());
@@ -87,7 +87,7 @@ void Bitmap::save(const QString &filename) {
 	channels.insert("R", Imf::Channel(Imf::FLOAT));
 	channels.insert("G", Imf::Channel(Imf::FLOAT));
 	channels.insert("B", Imf::Channel(Imf::FLOAT));
-	
+
 	Imf::FrameBuffer frameBuffer;
 	size_t compStride = sizeof(float),
 	       pixelStride = 3 * compStride,
