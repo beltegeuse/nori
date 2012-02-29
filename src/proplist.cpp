@@ -34,7 +34,7 @@ NORI_NAMESPACE_BEGIN
 		const Type *result = boost::get<Type>(&it->second); \
 		if (!result) \
 			throw NoriException(QString("Property '%1' has the wrong type! " \
-				"(expected <" #XmlName ">!").arg(name)); \
+				"(expected <" #XmlName ">)!").arg(name)); \
 		return (Type) *result; \
 	} \
 	\
@@ -45,7 +45,7 @@ NORI_NAMESPACE_BEGIN
 		const Type *result = boost::get<Type>(&it->second); \
 		if (!result) \
 			throw NoriException(QString("Property '%1' has the wrong type! " \
-				"(expected <" #XmlName ">!").arg(name)); \
+				"(expected <" #XmlName ">)!").arg(name)); \
 		return (Type) *result; \
 	}
 

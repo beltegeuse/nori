@@ -15,6 +15,7 @@
 			<xsd:element name="luminaire" type="object"/>
 			<xsd:element name="sampler" type="object"/>
 			<xsd:element name="rfilter" type="object"/>
+			<xsd:element name="scene" type="object"/>
 
 			<!-- Properties -->
 			<xsd:element name="integer" type="integer"/>
