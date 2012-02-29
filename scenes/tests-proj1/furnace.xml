@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+	Furnace
+
+	This test has the camera located inside a diffuse box with emittance 1
+	and albedo "a". The amount of illumination received by the camera should
+	be be the same in all directions and equal to
+	
+	1 + a + a^2 + ... = 1 / (1-a)
+
+	The following tests this for both the path tracer and the MIS path
+	tracer, with two different values of "a".
+-->
+
+<test type="ttest">
+	<string name="references" value="2, 2, 5, 5"/>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="10"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<mesh type="obj">
+			<string name="filename" value="furnace.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.5, 0.5, 0.5"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1, 1, 1"/>
+			</luminaire>
+		</mesh>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="10"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<mesh type="obj">
+			<string name="filename" value="furnace.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.5, 0.5, 0.5"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1, 1, 1"/>
+			</luminaire>
+		</mesh>
+	</scene>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="10"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<mesh type="obj">
+			<string name="filename" value="furnace.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.8, 0.8, 0.8"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1, 1, 1"/>
+			</luminaire>
+		</mesh>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="10"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<mesh type="obj">
+			<string name="filename" value="furnace.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.8, 0.8, 0.8"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1, 1, 1"/>
+			</luminaire>
+		</mesh>
+	</scene>
+</test>
