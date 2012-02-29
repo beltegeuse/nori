@@ -44,10 +44,14 @@ void Scene::activate() {
 
 	if (!m_integrator)
 		throw NoriException("No integrator was specified!");
-	if (!m_sampler)
-		throw NoriException("No sample generator was specified!");
 	if (!m_camera)
 		throw NoriException("No camera was specified!");
+	
+	if (!m_sampler) {
+		/* Create a default (independent) sampler */
+		m_sampler = static_cast<Sampler*>(
+			NoriObjectFactory::createInstance("independent", PropertyList()));
+	}
 
 	cout << endl;
 	cout << "Configuration: " << qPrintable(toString()) << endl;
