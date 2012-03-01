@@ -137,6 +137,9 @@ public:
 
 	/// Return the surface area of the entire mesh
 	inline float surfaceArea() const { return m_distr.getSum(); }
+	
+	/// Return the probability of \ref sampleArea()
+	inline float pdf() const { return m_distr.getNormalization(); }
 
 	/// Return a pointer to the vertex positions
 	inline const Point3f *getVertexPositions() const { return m_vertexPositions; }
