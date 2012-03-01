@@ -23,10 +23,14 @@
 #include <ImfStringAttribute.h>
 #include <ImfVersion.h>
 #include <ImfIO.h>
+#include <QFile>
 
 NORI_NAMESPACE_BEGIN
 
 Bitmap::Bitmap(const QString &filename) {
+	if (!QFile(filename).exists())
+		throw NoriException(QString("EXR file \"%1\" does not exist!").arg(filename));
+
 	QByteArray filenameUtf8 = filename.toUtf8();
 	Imf::InputFile file(filenameUtf8.data());
 	const Imf::Header &header = file.header();
