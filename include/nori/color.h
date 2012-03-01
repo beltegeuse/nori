@@ -59,6 +59,10 @@ public:
 	/// Return a reference to the blue channel (const version)
 	inline const float &b() const { return z(); }
 
+	/// Clamp to the positive range
+	inline Color3f clamp() const { return Color3f(std::max(r(), 0.0f),
+		std::max(g(), 0.0f), std::max(b(), 0.0f)); }
+
 	/// Check if the color vector contains a NaN/Inf/negative value
 	bool isValid() const;
 
