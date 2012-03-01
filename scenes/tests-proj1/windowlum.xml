@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+	Window illumination
+
+	This test is based on the solution to Homework 1, problem
+	1.  The cylindrical window is a rectangle in the
+	spherical coordinates of our environment map.  The
+	projected solid angle of the luminaire is supposed to be
+	
+	   delta-phi * (sin^2 theta_bottom - sin^2 theta_top) / 2
+
+	In our map the window is 768/4096 by 512/2048, which is
+        67.5 by 45 degrees, extending in theta from 22.5 to
+        67.5.  So the reference value is that expresson times
+        0.5/pi, which is the BRDF of our diffuse surface.
+
+           import numpy as np
+           mu = 3*np.pi/8 * (np.sin(3*np.pi/8)**2 - np.sin(np.pi/8)**2) / 2 
+           radiance = mu * 0.5/np.pi
+-->
+
+<test type="ttest">
+	<string name="references" value="0.25,0.0331456303681,0.0331456303681"/> 
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+		        <transform name="toWorld">
+			        <lookat origin="0, 1, 0"
+					target="0, 0, 0"
+					up="0, 0, 1"/>
+			</transform>
+			<float name="fov" value="1e-6"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<luminaire type="envmap">
+		        <string name="filename" value="white.exr"/>
+			<transform name="toWorld">
+			        <rotate axis="1,0,0" angle="90"/>
+			</transform>
+		</luminaire>
+
+		<mesh type="obj">
+			<string name="filename" value="floor.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.5, 0.5, 0.5"/>
+			</bsdf>
+		</mesh>
+	</scene>
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+		        <transform name="toWorld">
+			        <lookat origin="0, 1, 0"
+					target="0, 0, 0"
+					up="0, 0, 1"/>
+			</transform>
+			<float name="fov" value="1e-6"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<luminaire type="envmap">
+		        <string name="filename" value="windowlum.exr"/>
+			<transform name="toWorld">
+			        <rotate axis="1,0,0" angle="90"/>
+			</transform>
+		</luminaire>
+
+		<mesh type="obj">
+			<string name="filename" value="floor.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.5, 0.5, 0.5"/>
+			</bsdf>
+		</mesh>
+	</scene>
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+		        <transform name="toWorld">
+			        <lookat origin="0, 1, 0"
+					target="0, 0, 0"
+					up="0, 0, 1"/>
+			</transform>
+			<float name="fov" value="1e-6"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<mesh type="obj">
+			<string name="filename" value="windowlum.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1, 1, 1"/>
+			</luminaire>
+		</mesh>
+
+		<mesh type="obj">
+			<string name="filename" value="floor.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.5, 0.5, 0.5"/>
+			</bsdf>
+		</mesh>
+	</scene>
+</test>
