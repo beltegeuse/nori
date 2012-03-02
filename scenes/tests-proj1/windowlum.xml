@@ -21,7 +21,7 @@
 -->
 
 <test type="ttest">
-	<string name="references" value="0.5,0.0662912607362,0.0662912607362"/> 
+	<string name="references" value="0.5,0.0662912607362,0.0662912607362"/>
 
 	<scene>
 		<!-- Basic initial test: diffuse surface under uniform illumination -->
@@ -65,10 +65,7 @@
 		</camera>
 
 		<luminaire type="envmap">
-				<string name="filename" value="windowlum.exr"/>
-			<transform name="toWorld">
-					<rotate axis="1,0,0" angle="90"/>
-			</transform>
+			<string name="filename" value="windowlum.exr"/>
 		</luminaire>
 
 		<mesh type="obj">
