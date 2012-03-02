@@ -59,7 +59,7 @@ bool KDTree::rayIntersect(const Ray3f &ray, Intersection &its, bool shadowRay) c
 	/* Use an adaptive ray epsilon */
 	float mint = ray.mint, maxt = ray.maxt;
 	if (mint == Epsilon) 
-		mint *= ray.o.array().abs().maxCoeff();
+		mint = std::max(mint, mint * ray.o.array().abs().maxCoeff());
 
 	float bboxMinT, bboxMaxT;
 	if (!m_bbox.rayIntersect(ray, bboxMinT, bboxMaxT))
