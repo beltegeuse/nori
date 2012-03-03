@@ -61,11 +61,11 @@ public:
 		bool success;
 	
 		for (int i=0; i<angles.size(); ++i) {
-			if (angles[i].isNull())
+			if (angles[i] == "")
 				continue;
 			m_angles.push_back(angles[i].toFloat(&success));
 			if (!success)
-				throw NoriException(QString("Could not parse '%1'").arg(angleString));
+				throw NoriException(QString("Could not parse '%1'").arg(angles[i]));
 		}
 
 		/* This parameter specifies a list of reference values, one for each angle */
