@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+	Directional illumination from an environment map that has
+	only one pixel turned on.
+
+	The direction associated with this pixel is given by
+		d = [0.27374   0.30492  -0.91219]
+	i.e. cos(theta)=0.34092.
+
+	The luminance at the origin is given by (ignoring minor 
+	details such as how the environment map is interpolated)
+
+	(cos((25*pi)/128) - cos((51*pi)/256))/4096 = 1.74014e-6
+
+	When everything is implemented correctly, the sample
+	variance reported by the test should be extremely low: 
+	the reference solutions for instance reports a value
+	of 1.23831e-15.
+-->
+
+<test type="ttest">
+	<string name="references" value="1.74014e-6"/>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<transform name="toWorld">
+				<lookat origin="0, 1, 0"
+				        target="0, 0, 0"
+				        up="0, 0, 1"/>
+			</transform>
+			<float name="fov" value="1e-6"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<luminaire type="envmap">
+			<string name="filename" value="dirlum.exr"/>
+		</luminaire>
+
+		<mesh type="obj">
+			<string name="filename" value="floor.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.5, 0.5, 0.5"/>
+			</bsdf>
+		</mesh>
+	</scene>
+</test>
