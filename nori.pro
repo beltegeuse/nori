@@ -39,6 +39,9 @@ QT += xml xmlpatterns opengl
 macx {
 	OBJECTIVE_SOURCES += src/support_osx.m
 	QMAKE_LFLAGS += -framework Cocoa -lobjc
+	# The following is (strangely) needed for correct exception handling on Mac OS 10.6+
+	QMAKE_CXXFLAGS_X86_64 -= -mmacosx-version-min=10.5
+	QMAKE_CXXFLAGS_X86_64 += -mmacosx-version-min=10.6
 }
 
 macx | unix {
