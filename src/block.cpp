@@ -79,7 +79,7 @@ void ImageBlock::put(const Point2f &_pos, const Color3f &value) {
 		Point2i( std::ceil(pos.x() - m_filterRadius),  std::ceil(pos.y() - m_filterRadius)),
 		Point2i(std::floor(pos.x() + m_filterRadius), std::floor(pos.y() + m_filterRadius))
 	);
-	bbox.clip(BoundingBox2i(Point2i(0, 0), Point2i(cols(), rows())));
+	bbox.clip(BoundingBox2i(Point2i(0, 0), Point2i(cols() - 1, rows() - 1)));
 
 	/* Lookup values from the pre-rasterized filter */
 	for (int x=bbox.min.x(), idx = 0; x<=bbox.max.x(); ++x)
