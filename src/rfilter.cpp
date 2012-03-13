@@ -97,7 +97,7 @@ public:
 	}
 
 	float eval(float x) const {
-		return std::max(0.0f, 1.0f - x);
+		return std::max(0.0f, 1.0f - std::abs(x));
 	}
 	
 	QString toString() const {
