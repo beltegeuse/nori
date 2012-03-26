@@ -33,6 +33,9 @@ NORI_NAMESPACE_BEGIN
  */
 class Medium : public NoriObject {
 public:
+	/// Virtual destructor
+	virtual ~Medium();
+
  	/**
 	 * \brief Importance sample the distance to the next medium 
 	 * interaction along the specified ray
@@ -67,11 +70,26 @@ public:
 	 */
 	virtual Color3f evalTransmittance(const Ray3f &ray) const = 0;
 
+	/// Return a pointer to the phase function associated with this medium
+	inline const PhaseFunction *getPhaseFunction() const { return m_phaseFunction; }
+
+	/// Register a child object (e.g. a phase function) with the medium
+	virtual void addChild(NoriObject *child);
+
+	/// Initialize internal data structures (called once by the XML parser)
+	virtual void activate();
+
 	/**
 	 * \brief Return the type of object (i.e. Mesh/Camera/etc.) 
 	 * provided by this instance
 	 * */
 	EClassType getClassType() const { return EMedium; }
+protected:
+	/// Construct a new participating medium
+	Medium();
+
+protected:
+	PhaseFunction *m_phaseFunction;
 };
 
 NORI_NAMESPACE_END

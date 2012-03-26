@@ -1,0 +1,61 @@
+/*
+    This file is part of Nori, a simple educational ray tracer
+
+    Copyright (c) 2012 by Wenzel Jakob and Steve Marschner.
+
+    Nori is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License Version 3
+    as published by the Free Software Foundation.
+
+    Nori is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <nori/medium.h>
+
+NORI_NAMESPACE_BEGIN
+
+/**
+ * \brief Box-shaped homogeneous participating medium
+ */
+class HomogeneousMedium : public Medium {
+public:
+	HomogeneousMedium(const PropertyList &propList) {
+		m_sigmaS = propList.getColor("sigmaS");
+		m_sigmaT = propList.getColor("sigmaT");
+		m_mediumToWorld = propList.getTransform("toWorld", Transform());
+		m_worldToMedium = m_mediumToWorld.inverse();
+	}
+
+	bool sampleDistance(const Ray3f &ray, float &t, Color3f &weight) const {
+		throw NoriException("HomogeneousMedium::sampleDistance(): not implemented!");
+	}
+
+	Color3f evalTransmittance(const Ray3f &ray) const {
+		throw NoriException("HomogeneousMedium::evalTransmittance(): not implemented!");
+	}
+
+	/// Return a human-readable summary
+	QString toString() const {
+		return QString(
+			"HomogeneousMedium[\n"
+			"  sigmaS = %1,\n"
+			"  sigmaT = %2,\n"
+			"]")
+		.arg(m_sigmaS.toString())
+		.arg(m_sigmaT.toString());
+	}
+private:
+	Color3f m_sigmaS;
+	Color3f m_sigmaT;
+	Transform m_mediumToWorld;
+	Transform m_worldToMedium;
+};
+
+NORI_REGISTER_CLASS(HomogeneousMedium, "homogeneous");
+NORI_NAMESPACE_END

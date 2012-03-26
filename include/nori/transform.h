@@ -81,7 +81,7 @@ public:
 	}
 
 	/// Apply the homogeneous transformation to a ray
-	inline Ray3f operator&(const Ray3f &r) const {
+	inline Ray3f operator*(const Ray3f &r) const {
 		return Ray3f(
 			operator*(r.o), 
 			operator*(r.d), 

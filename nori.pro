@@ -19,6 +19,9 @@ SOURCES += src/common.cpp \
 	src/bitmap.cpp \
 	src/parser.cpp \
 	src/mirror.cpp \
+	src/medium.cpp \
+	src/homogeneous.cpp \
+	src/heterogeneous.cpp \
 	src/independent.cpp \
 	src/main.cpp \
 	src/gui.cpp

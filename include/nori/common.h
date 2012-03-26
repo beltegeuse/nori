@@ -55,7 +55,7 @@
 #if defined(__GNUC__)
 #define EXPECT_TAKEN(a)        __builtin_expect(a, true)
 #define EXPECT_NOT_TAKEN(a)    __builtin_expect(a, false)
-#if defined(__LINUX__) 
+#if defined(__linux) 
 #define __restrict             __restrict__
 #endif
 #else

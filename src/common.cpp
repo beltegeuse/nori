@@ -179,9 +179,9 @@ void coordinateSystem(const Vector3f &a, Vector3f &b, Vector3f &c) {
 }
 
 void *allocAligned(size_t size) {
-#if defined(Q_WS_WIN)
+#if defined(WIN32)
 	return _aligned_malloc(size, L1_CACHE_LINE_SIZE);
-#elif defined(Q_WS_MACX)
+#elif defined(__OSX__)
 	/* OSX malloc already returns 16-byte aligned data suitable
 	   for AltiVec and SSE computations */
 	return malloc(size);
@@ -191,7 +191,7 @@ void *allocAligned(size_t size) {
 }
 
 void freeAligned(void *ptr) {
-#if defined(Q_WS_WIN)
+#if defined(WIN32)
 	_aligned_free(ptr);
 #else
 	free(ptr);
