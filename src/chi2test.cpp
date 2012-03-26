@@ -348,7 +348,8 @@ public:
 		/* Apply the Sidak correction term, since we'll be conducting multiple independent 
 		   hypothesis tests. This accounts for the fact that the probability of a failure
 		   increases quickly when several hypothesis tests are run in sequence. */
-		float alpha = 1.0f - std::pow(1.0f - m_significanceLevel, 1.0f / (m_testCount * m_bsdfs.size()));
+		float alpha = 1.0f - std::pow(1.0f - m_significanceLevel, 1.0f / (m_testCount * 
+			(m_bsdfs.size() + m_phaseFunctions.size())));
 
 		if (pval < alpha) {
 			cout << "Rejected the null hypothesis (p-value = " << pval << ", "

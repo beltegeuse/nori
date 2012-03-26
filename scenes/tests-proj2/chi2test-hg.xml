@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<test type="chi2test">
+	<!-- Test a few different configurations of the Henyey-Greenstein model -->
+
+	<phase type="hg">
+		<float name="g" value="-.8"/>
+	</phase>
+
+	<phase type="hg">
+		<float name="g" value="0"/>
+	</phase>
+
+	<phase type="hg">
+		<float name="g" value=".9"/>
+	</phase>
+</test>
