@@ -97,6 +97,40 @@ public:
 		return m_kdtree->rayIntersect(ray, its, true);
 	}
 
+ 	/**
+	 * \brief Importance sample the distance to the next medium 
+	 * interaction along the specified ray
+	 *
+	 * \param ray
+	 *    A ray data structure 
+	 *
+	 * \param[out] t
+	 *    This parameter is used to return the sampled distance, when
+	 *    medium sampling succeeded. Otherwise, it is not used.
+	 *
+	 * \param[out] weight
+	 *    This parameter records the importance weight associated with 
+	 *    the sample. When a position inside the medium is sampled, it 
+	 *    records the product of sigma_s and the transmittance, divided
+	 *    by the probability per unit length. When medium sampling fails,
+	 *    it returns the transmittance along the ray, divided by the
+	 *    discrete probability of failure.
+	 *
+	 * \return
+	 *    \c true if medium sampling succeeded, and \c false otherwise.
+	 */
+	bool sampleDistance(const Ray3f &ray, float &t, Color3f &weight) const;
+
+	/**
+	 * \brief Evaluate the transmittance along the path segment [mint, maxt]
+	 *
+	 * The transmittance is defined as 
+	 * \f[
+	 *      \exp(-\int_{mint}^{maxt} \sigma_t(t) dt)
+	 * \f]
+	 */
+	Color3f evalTransmittance(const Ray3f &ray) const;
+
 	/**
 	 * \brief Return an axis-aligned box that bounds the scene
 	 */

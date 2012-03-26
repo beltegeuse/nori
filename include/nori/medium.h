@@ -65,7 +65,7 @@ public:
 	 *      \exp(-\int_{mint}^{maxt} \sigma_t(t) dt)
 	 * \f]
 	 */
-	virtual bool evalTransmittance(const Ray3f &ray) const = 0;
+	virtual Color3f evalTransmittance(const Ray3f &ray) const = 0;
 
 	/**
 	 * \brief Return the type of object (i.e. Mesh/Camera/etc.) 

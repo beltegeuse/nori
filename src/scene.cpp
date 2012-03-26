@@ -42,6 +42,23 @@ Scene::~Scene() {
 		delete m_medium;
 }
 
+bool Scene::sampleDistance(const Ray3f &ray, float &t, Color3f &weight) const {
+	if (m_medium) {
+		return m_medium->sampleDistance(ray, t, weight);
+	} else {
+		weight = Color3f(1.0f);
+		return false;
+	}
+}
+
+Color3f Scene::evalTransmittance(const Ray3f &ray) const {
+	if (m_medium) {
+		return m_medium->evalTransmittance(ray);
+	} else {
+		return Color3f(1.0f);
+	}
+}
+
 void Scene::activate() {
 	m_kdtree->build();
 

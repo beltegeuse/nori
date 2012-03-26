@@ -17,6 +17,7 @@
 */
 
 #include <nori/bsdf.h>
+#include <nori/phase.h>
 #include <nori/quad.h>
 #include <nori/random.h>
 #include <boost/math/distributions/chi_squared.hpp>
@@ -66,12 +67,19 @@ public:
 
 		for (size_t i=0; i<m_bsdfs.size(); ++i)
 			delete m_bsdfs[i];
+
+		for (size_t i=0; i<m_phaseFunctions.size(); ++i)
+			delete m_phaseFunctions[i];
 	}
 
 	void addChild(NoriObject *obj) {
 		switch (obj->getClassType()) {
 			case EBSDF:
 				m_bsdfs.push_back(static_cast<BSDF *>(obj));
+				break;
+			
+			case EPhaseFunction:
+				m_phaseFunctions.push_back(static_cast<PhaseFunction *>(obj));
 				break;
 
 			default:
@@ -150,7 +158,7 @@ public:
 						double result, error;
 
 						integrator.integrateVectorized(
-							boost::bind(&ChiSquareTest::integrand, bsdf, wi, _1, _2, _3),
+							boost::bind(&ChiSquareTest::bsdfIntegrand, bsdf, wi, _1, _2, _3),
 							min, max, &result, &error
 						);
 	
@@ -166,6 +174,83 @@ public:
 				cout << endl;
 			}
 		}
+
+		/* Test each registered phase function */
+		for (size_t k=0; k<m_phaseFunctions.size(); ++k) {
+			const PhaseFunction *phaseFunction = m_phaseFunctions[k];
+
+			/* Run several tests to be on the safe side */
+			for (int l = 0; l<m_testCount; ++l) {
+				cout << "------------------------------------------------------" << endl;
+				cout << "Testing: " << qPrintable(phaseFunction->toString()) << endl;
+				++total;
+
+				/* Randomly pick an incident direction on the sphere */
+				Vector3f wi = squareToUniformSphere(
+					Point2f(random->nextFloat(), random->nextFloat()));
+	
+				cout << "Accumulating " << m_sampleCount << " samples into a " << m_thetaResolution 
+					 << "x" << m_phiResolution << " contingency table .." << endl;
+
+				float factorTheta = m_thetaResolution / M_PI,
+					  factorPhi   = m_phiResolution / (2 * M_PI);
+	
+				memset(m_frequencies, 0, m_thetaResolution*m_phiResolution*sizeof(float));
+
+				/* Generate many samples from the PhaseFunction and create 
+				   a histogram / contingency table */
+				PhaseFunctionQueryRecord bRec(wi);
+				for (int i=0; i<m_sampleCount; ++i) {
+					Point2f sample(random->nextFloat(), random->nextFloat());
+					Color3f result = phaseFunction->sample(bRec, sample);
+
+					if ((result.array() == 0).all())
+						continue;
+	
+					Point2f coords = sphericalCoordinates(bRec.wo);
+	
+					int thetaBin = std::min(std::max(0,
+						(int) std::floor(coords.x() * factorTheta)), m_thetaResolution-1);
+					int phiBin = std::min(std::max(0,
+						(int) std::floor(coords.y() * factorPhi)), m_phiResolution-1);
+					m_frequencies[thetaBin * m_phiResolution + phiBin] += 1;
+				}
+	
+				factorTheta = M_PI / m_thetaResolution;
+				factorPhi   = 2 * M_PI / m_phiResolution;
+	
+				/* Numerically integrate the probability density
+				   function over rectangles in spherical coordinates.
+				   This is done using the 'cubature' library. */
+				float *ptr = m_expFrequencies;
+				cout << "Integrating expected frequencies .." << endl;
+				for (int i=0; i<m_thetaResolution; ++i) {
+					double min[2], max[2];
+					min[0] = i * factorTheta;
+					max[0] = (i+1) * factorTheta;
+					for (int j=0; j<m_phiResolution; ++j) {
+						min[1] = j * factorPhi;
+						max[1] = (j+1) * factorPhi;
+						double result, error;
+
+						integrator.integrateVectorized(
+							boost::bind(&ChiSquareTest::phaseFunctionIntegrand, phaseFunction, wi, _1, _2, _3),
+							min, max, &result, &error
+						);
+	
+						*ptr++ = result * m_sampleCount;
+					}
+				}
+	
+				dump(QString("chi2test_%1.m").arg(total));
+
+				if (runTest())
+					++passed;
+
+				cout << endl;
+			}
+		}
+
 		cout << "Passed " << passed << "/" << total << " tests." << endl;
 
 		delete random;
@@ -339,7 +424,7 @@ public:
 	EClassType getClassType() const { return ETest; }
 private:
 	/// Functor to evaluate the pdf values in parallel using OpenMP
-	static void integrand(const BSDF *bsdf,
+	static void bsdfIntegrand(const BSDF *bsdf,
 		const Vector3f &wi, size_t nPts, const double *in, double *out) {
 		// Disabling for now, this is actually slower in some cases!
 		// #pragma omp parallel for
@@ -352,6 +437,17 @@ private:
 		}
 	}
 
+	static void phaseFunctionIntegrand(const PhaseFunction *phase,
+		const Vector3f &wi, size_t nPts, const double *in, double *out) {
+		// Disabling for now, this is actually slower in some cases!
+		for (int i=0; i<(int) nPts; ++i) {
+			/* The quadrature code runs in double precision, so some extra
+			   conversions are required */
+			Vector3f wo = sphericalDirection((float) in[2*i], (float) in[2*i+1]);
+			PhaseFunctionQueryRecord bRec(wi, wo);
+			out[i] = (double) (phase->pdf(bRec) * std::sin((float) in[2*i]));
+		}
+	}
 private:
 	int m_thetaResolution, m_phiResolution;
 	int m_minExpFrequency;
@@ -361,6 +457,7 @@ private:
 	float *m_expFrequencies;
 	float m_significanceLevel;
 	std::vector<BSDF *> m_bsdfs;
+	std::vector<PhaseFunction *> m_phaseFunctions;
 };
 
 NORI_REGISTER_CLASS(ChiSquareTest, "chi2test");
