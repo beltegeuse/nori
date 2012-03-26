@@ -53,6 +53,9 @@ public:
 	/// Return a pointer to the scene's sample generator
 	inline Sampler *getSampler() { return m_sampler; }
 
+	/// Return a pointer to the scene's medium (if any)
+	inline const Medium *getMedium() const { return m_medium; }
+
 	/// Return a reference to an array containing all meshes
 	inline const std::vector<Mesh *> &getMeshes() const { return m_meshes; }
 
@@ -121,6 +124,7 @@ private:
 	Integrator *m_integrator;
 	Sampler *m_sampler;
 	Camera *m_camera;
+	Medium *m_medium;
 	KDTree *m_kdtree;
 };
 

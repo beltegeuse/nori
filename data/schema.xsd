@@ -16,6 +16,8 @@
 			<xsd:element name="sampler" type="object"/>
 			<xsd:element name="rfilter" type="object"/>
 			<xsd:element name="scene" type="object"/>
+			<xsd:element name="medium" type="object"/>
+			<xsd:element name="phase" type="object"/>
 
 			<!-- Properties -->
 			<xsd:element name="integer" type="integer"/>

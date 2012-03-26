@@ -2,6 +2,7 @@ SOURCES += src/common.cpp \
 	src/object.cpp \
 	src/proplist.cpp \
 	src/diffuse.cpp \
+	src/isotropic.cpp \
 	src/microfacet.cpp \
 	src/scene.cpp \
 	src/random.cpp \

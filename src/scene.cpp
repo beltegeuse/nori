@@ -21,11 +21,12 @@
 #include <nori/integrator.h>
 #include <nori/sampler.h>
 #include <nori/camera.h>
+#include <nori/medium.h>
 
 NORI_NAMESPACE_BEGIN
 
 Scene::Scene(const PropertyList &) 
-	: m_integrator(NULL), m_sampler(NULL), m_camera(NULL) {
+	: m_integrator(NULL), m_sampler(NULL), m_camera(NULL), m_medium(NULL) {
 	m_kdtree = new KDTree();
 }
 
@@ -37,6 +38,8 @@ Scene::~Scene() {
 		delete m_camera;
 	if (m_integrator)
 		delete m_integrator;
+	if (m_medium)
+		delete m_medium;
 }
 
 void Scene::activate() {
@@ -78,6 +81,12 @@ void Scene::addChild(NoriObject *obj) {
 				throw NoriException("There can only be one camera per scene!");
 			m_camera = static_cast<Camera *>(obj);
 			break;
+		
+		case EMedium:
+			if (m_medium)
+				throw NoriException("There can only be one medium per scene!");
+			m_medium = static_cast<Medium *>(obj);
+			break;
 
 		case EIntegrator:
 			if (m_integrator)
@@ -104,12 +113,14 @@ QString Scene::toString() const {
 		"  integrator = %1,\n"
 		"  sampler = %2\n"
 		"  camera = %3,\n"
+		"  medium = %4,\n"
 		"  meshes = {\n"
-		"  %4}\n"
+		"  %5}\n"
 		"]")
 	.arg(indent(m_integrator->toString()))
 	.arg(indent(m_sampler->toString()))
 	.arg(indent(m_camera->toString()))
+	.arg(m_medium ? indent(m_medium->toString()) : QString("null"))
 	.arg(indent(meshes, 2));
 }
 

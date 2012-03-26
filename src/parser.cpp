@@ -35,6 +35,8 @@ public:
 		EBSDF                 = NoriObject::EBSDF,
 		ELuminaire            = NoriObject::ELuminaire,
 		ECamera               = NoriObject::ECamera,
+		EMedium               = NoriObject::EMedium,
+		EPhaseFunction        = NoriObject::EPhaseFunction,
 		EIntegrator           = NoriObject::EIntegrator,
 		ESampler              = NoriObject::ESampler,
 		ETest                 = NoriObject::ETest, 
@@ -62,6 +64,8 @@ public:
 		m_tags["bsdf"]       = EBSDF;
 		m_tags["luminaire"]  = ELuminaire;
 		m_tags["camera"]     = ECamera;
+		m_tags["medium"]     = EMedium;
+		m_tags["phase"]      = EPhaseFunction;
 		m_tags["integrator"] = EIntegrator;
 		m_tags["sampler"]    = ESampler;
 		m_tags["rfilter"]    = EReconstructionFilter;

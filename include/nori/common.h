@@ -142,6 +142,8 @@ class Sampler;
 class KDTree;
 class Scene;
 class ReconstructionFilter;
+class PhaseFunction;
+class Medium;
 
 /// Import cout, cerr, endl for debugging purposes
 using std::cout;
