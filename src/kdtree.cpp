@@ -56,6 +56,8 @@ bool KDTree::rayIntersect(const Ray3f &ray, Intersection &its, bool shadowRay) c
 		Point3f p;
 	} stack[NORI_KD_MAXDEPTH];
 
+	its.t = std::numeric_limits<float>::infinity();
+
 	/* Use an adaptive ray epsilon */
 	float mint = ray.mint, maxt = ray.maxt;
 	if (mint == Epsilon) 

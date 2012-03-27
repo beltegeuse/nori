@@ -43,7 +43,7 @@ void Medium::addChild(NoriObject *child) {
 }
 
 void Medium::activate() {
-	if (m_phaseFunction)
+	if (!m_phaseFunction)
 		m_phaseFunction = static_cast<PhaseFunction *>(
 			NoriObjectFactory::createInstance("isotropic", PropertyList()));
 }

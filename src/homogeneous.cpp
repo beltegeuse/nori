@@ -27,7 +27,7 @@ class HomogeneousMedium : public Medium {
 public:
 	HomogeneousMedium(const PropertyList &propList) {
 		m_sigmaS = propList.getColor("sigmaS");
-		m_sigmaT = propList.getColor("sigmaT");
+		m_sigmaT = propList.getColor("sigmaA") + m_sigmaS;
 		// An (optional) transformation that converts between medium and world coordinates
 		m_worldToMedium = propList.getTransform("toWorld", Transform()).inverse();
 	}
