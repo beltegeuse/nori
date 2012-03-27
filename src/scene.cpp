@@ -42,9 +42,9 @@ Scene::~Scene() {
 		delete m_medium;
 }
 
-bool Scene::sampleDistance(const Ray3f &ray, float &t, Color3f &weight) const {
+bool Scene::sampleDistance(const Ray3f &ray, Sampler *sampler, float &t, Color3f &weight) const {
 	if (m_medium) {
-		return m_medium->sampleDistance(ray, t, weight);
+		return m_medium->sampleDistance(ray, sampler, t, weight);
 	} else {
 		weight = Color3f(1.0f);
 		return false;

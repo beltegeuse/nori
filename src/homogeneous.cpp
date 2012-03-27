@@ -32,7 +32,7 @@ public:
 		m_worldToMedium = propList.getTransform("toWorld", Transform()).inverse();
 	}
 
-	bool sampleDistance(const Ray3f &ray, float &t, Color3f &weight) const {
+	bool sampleDistance(const Ray3f &ray, Sampler *sampler, float &t, Color3f &weight) const {
 		throw NoriException("HomogeneousMedium::sampleDistance(): not implemented!");
 	}
 

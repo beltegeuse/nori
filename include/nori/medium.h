@@ -41,7 +41,10 @@ public:
 	 * interaction along the specified ray
 	 *
 	 * \param ray
-	 *    A ray data structure 
+	 *    A ray data structure
+	 *
+	 * \param sampler
+	 *    A sample generator
 	 *
 	 * \param[out] t
 	 *    This parameter is used to return the sampled distance, when
@@ -58,7 +61,7 @@ public:
 	 * \return
 	 *    \c true if medium sampling succeeded, and \c false otherwise.
 	 */
-	virtual bool sampleDistance(const Ray3f &ray, float &t, Color3f &weight) const = 0;
+	virtual bool sampleDistance(const Ray3f &ray, Sampler *sampler, float &t, Color3f &weight) const = 0;
 
 	/**
 	 * \brief Evaluate the transmittance along the path segment [mint, maxt]

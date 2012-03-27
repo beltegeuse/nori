@@ -155,7 +155,7 @@ public:
 		         (d110 * w0.x() + d111 * w1.x()) * w1.y()) * w1.z()) * m_densityMultiplier;
 	}
 
-	bool sampleDistance(const Ray3f &_ray, float &t, Color3f &weight) const {
+	bool sampleDistance(const Ray3f &_ray, Sampler *sampler, float &t, Color3f &weight) const {
 		/* Transform the ray into the local coordinate system */
 		Ray3f ray = m_worldToMedium * _ray;
 
