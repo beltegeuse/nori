@@ -70,8 +70,13 @@ public:
 	 * \f[
 	 *      \exp(-\int_{mint}^{maxt} \sigma_t(t) dt)
 	 * \f]
+	 *
+	 * The transmittance evaluation may either be deterministic, in which
+	 * case the \c sample parameter is ignored. Or it can also be
+	 * random, but under the assumption that an unbiased transmittance
+	 * estimate is returned.
 	 */
-	virtual Color3f evalTransmittance(const Ray3f &ray) const = 0;
+	virtual Color3f evalTransmittance(const Ray3f &ray, Sampler *sampler) const = 0;
 
 	/// Return a pointer to the phase function associated with this medium
 	inline const PhaseFunction *getPhaseFunction() const { return m_phaseFunction; }

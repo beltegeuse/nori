@@ -131,8 +131,13 @@ public:
 	 * \f[
 	 *      \exp(-\int_{mint}^{maxt} \sigma_t(t) dt)
 	 * \f]
+	 *
+	 * The transmittance evaluation may either be deterministic, in which
+	 * case the \c sample parameter is ignored. Or it can also be
+	 * random, but under the assumption that an unbiased transmittance
+	 * estimate is returned.
 	 */
-	Color3f evalTransmittance(const Ray3f &ray) const;
+	Color3f evalTransmittance(const Ray3f &ray, Sampler *sampler) const;
 
 	/**
 	 * \brief Return an axis-aligned box that bounds the scene

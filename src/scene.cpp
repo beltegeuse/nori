@@ -51,9 +51,9 @@ bool Scene::sampleDistance(const Ray3f &ray, Sampler *sampler, float &t, Color3f
 	}
 }
 
-Color3f Scene::evalTransmittance(const Ray3f &ray) const {
+Color3f Scene::evalTransmittance(const Ray3f &ray, Sampler *sampler) const {
 	if (m_medium) {
-		return m_medium->evalTransmittance(ray);
+		return m_medium->evalTransmittance(ray, sampler);
 	} else {
 		return Color3f(1.0f);
 	}

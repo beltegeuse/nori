@@ -124,7 +124,7 @@ public:
 	 * You may assume that the maximum value returned by this function is
 	 * equal to 'm_densityMultiplier'
 	 */
-	float lookupSigmaT(const Point3f &_p) {
+	float lookupSigmaT(const Point3f &_p) const {
 		Point3f p  = _p.cwiseProduct(m_resolution.cast<float>()),
 				pf = Point3f(std::floor(p.x()), std::floor(p.y()), std::floor(p.z()));
 		Point3i p0 = pf.cast<int>();
@@ -162,7 +162,7 @@ public:
 		throw NoriException("HeterogeneousMedium::sampleDistance(): not implemented!");
 	}
 
-	Color3f evalTransmittance(const Ray3f &_ray) const {
+	Color3f evalTransmittance(const Ray3f &_ray, Sampler *sampler) const {
 		/* Transform the ray into the local coordinate system */
 		Ray3f ray = m_worldToMedium * _ray;
 

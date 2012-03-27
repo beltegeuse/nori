@@ -36,7 +36,7 @@ public:
 		throw NoriException("HomogeneousMedium::sampleDistance(): not implemented!");
 	}
 
-	Color3f evalTransmittance(const Ray3f &ray) const {
+	Color3f evalTransmittance(const Ray3f &ray, Sampler *sampler) const {
 		throw NoriException("HomogeneousMedium::evalTransmittance(): not implemented!");
 	}
 
