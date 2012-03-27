@@ -28,8 +28,8 @@ public:
 	HomogeneousMedium(const PropertyList &propList) {
 		m_sigmaS = propList.getColor("sigmaS");
 		m_sigmaT = propList.getColor("sigmaT");
-		m_mediumToWorld = propList.getTransform("toWorld", Transform());
-		m_worldToMedium = m_mediumToWorld.inverse();
+		// An (optional) transformation that converts between medium and world coordinates
+		m_worldToMedium = propList.getTransform("toWorld", Transform()).inverse();
 	}
 
 	bool sampleDistance(const Ray3f &ray, float &t, Color3f &weight) const {
@@ -53,7 +53,6 @@ public:
 private:
 	Color3f m_sigmaS;
 	Color3f m_sigmaT;
-	Transform m_mediumToWorld;
 	Transform m_worldToMedium;
 };
 
