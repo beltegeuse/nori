@@ -41,6 +41,14 @@
 #define NORI_NAMESPACE_BEGIN namespace nori {
 #define NORI_NAMESPACE_END }
 
+#if defined(__APPLE__)
+#define PLATFORM_MACOS
+#elif defined(__linux__)
+#define PLATFORM_LINUX
+#elif defined(WIN32)
+#define PLATFORM_WINDOWS
+#endif
+
 /* "Ray epsilon": relative error threshold for ray intersection computations */
 #define Epsilon 1e-4f
 

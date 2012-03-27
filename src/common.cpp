@@ -3,12 +3,16 @@
 #include <Eigen/LU>
 #include <boost/math/special_functions/fpclassify.hpp>
 
-#if defined(__linux__)
+#if defined(PLATFORM_LINUX)
 #include <malloc.h>
 #endif
 
-#if defined(WIN32)
+#if defined(PLATFORM_WINDOWS)
 #include <windows.h>
+#endif
+
+#if defined(PLATFORM_MACOS)
+#include <sys/sysctl.h>
 #endif
 
 #if !defined(L1_CACHE_LINE_SIZE)
@@ -179,9 +183,9 @@ void coordinateSystem(const Vector3f &a, Vector3f &b, Vector3f &c) {
 }
 
 void *allocAligned(size_t size) {
-#if defined(WIN32)
+#if defined(PLATFORM_WINDOWS)
 	return _aligned_malloc(size, L1_CACHE_LINE_SIZE);
-#elif defined(__OSX__)
+#elif defined(PLATFORM_MACOS)
 	/* OSX malloc already returns 16-byte aligned data suitable
 	   for AltiVec and SSE computations */
 	return malloc(size);
@@ -191,7 +195,7 @@ void *allocAligned(size_t size) {
 }
 
 void freeAligned(void *ptr) {
-#if defined(WIN32)
+#if defined(PLATFORM_WINDOWS)
 	_aligned_free(ptr);
 #else
 	free(ptr);
@@ -199,15 +203,15 @@ void freeAligned(void *ptr) {
 }
 
 int getCoreCount() {
-#if defined(WIN32)
+#if defined(PLATFORM_WINDOWS)
 	SYSTEM_INFO sys_info;
 	GetSystemInfo(&sys_info);
 	return sys_info.dwNumberOfProcessors;
-#elif defined(__OSX__)
+#elif defined(PLATFORM_MACOS)
 	int nprocs;
 	size_t nprocsSize = sizeof(int);
 	if (sysctlbyname("hw.activecpu", &nprocs, &nprocsSize, NULL, 0))
-		SLog(EError, "Could not detect the number of processors!");
+		throw NoriException("Could not detect the number of processors!");
 	return (int) nprocs;
 #else
 	return sysconf(_SC_NPROCESSORS_CONF);

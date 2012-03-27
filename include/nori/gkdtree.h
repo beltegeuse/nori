@@ -558,7 +558,7 @@ protected:
 	BoundingBoxType m_bbox, m_tightBBox;
 };
 
-#if defined(WIN32)
+#if defined(PLATFORM_WINDOWS)
 /* Use strict IEEE 754 floating point computations 
    for the following kd-tree building code */
 NORI_NAMESPACE_END
@@ -2464,7 +2464,7 @@ private:
 	Vector3f m_temp0, m_temp1;
 };
 
-#if defined(WIN32)
+#if defined(PLATFORM_WINDOWS)
 /* Revert back to fast / non-strict IEEE 754 
    floating point computations */
 NORI_NAMESPACE_END

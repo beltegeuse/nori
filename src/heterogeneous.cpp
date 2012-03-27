@@ -20,7 +20,7 @@
 #include <QFile>
 #include <QDataStream>
 
-#if defined(__linux__) || defined(__OSX__)
+#if defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
 #include <sys/mman.h>
 #include <fcntl.h>
 #endif
@@ -72,7 +72,7 @@ public:
 			<< "x" << m_resolution.y() << "x" << m_resolution.z() << ") into memory .." << endl;
 
 		m_fileSize = (size_t) file.size();
-		#if defined(__linux__) || defined(__OSX__)
+		#if defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
 			int fd = open(filename.data(), O_RDONLY);
 			if (fd == -1)
 				throw NoriException(QString("Could not open \"%1\"!").arg(m_filename));
@@ -81,7 +81,7 @@ public:
 				throw NoriException("mmap(): failed.");
 			if (close(fd) != 0)
 				throw NoriException("close(): unable to close file descriptor!");
-		#elif defined(WIN32)
+		#elif defined(PLATFORM_WINDOWS)
 			m_file = CreateFile(filename.data(), GENERIC_READ, 
 				FILE_SHARE_READ, NULL, OPEN_EXISTING, 
 				FILE_ATTRIBUTE_NORMAL, NULL);
@@ -103,11 +103,11 @@ public:
 			m_data -= 12;
 
 			cout << "Unmapping \"" << qPrintable(m_filename) << "\" from memory.." << endl;
-			#if defined(__linux) || defined(__OSX__)
+			#if defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
 				int retval = munmap(m_data, m_fileSize);
 				if (retval != 0)
 					throw NoriException("munmap(): unable to unmap memory!");
-			#elif defined(WIN32)
+			#elif defined(PLATFORM_WINDOWS)
 				if (!UnmapViewOfFile(m_data))
 					throw NoriException("UnmapViewOfFile(): unable to unmap memory region");
 				if (!CloseHandle(m_fileMapping))
@@ -185,7 +185,7 @@ private:
 	Transform m_worldToMedium;
 
 	/* Memory map-related attributes */
-#if defined(WIN32)
+#if defined(PLATFORM_LINUX)
 	HANDLE m_file;
 	HANDLE m_fileMapping;
 #endif

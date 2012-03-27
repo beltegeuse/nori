@@ -312,7 +312,7 @@ NoriObject *loadScene(const QString &filename) {
 	QFile schemaFile(":/schema.xsd");
 	QXmlSchema schema;
 
-	#if !defined(WIN32)
+	#if !defined(PLATFORM_WINDOWS)
 		/* Fixes number parsing on some machines (notably those with locale ru_RU) */
 		setlocale(LC_NUMERIC, "C");
 	#endif
