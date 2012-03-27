@@ -185,7 +185,7 @@ private:
 	Transform m_worldToMedium;
 
 	/* Memory map-related attributes */
-#if defined(PLATFORM_LINUX)
+#if defined(PLATFORM_WINDOWS)
 	HANDLE m_file;
 	HANDLE m_fileMapping;
 #endif
