@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+	Furnace with absorption
+
+	This test has the camera located inside a diffuse sphere with 
+	emittance 1, albedo "a", and absorption coefficient "sigma_a".
+	There is no volume scattering. By symmetry, each point on the 
+	sphere reflects the same amount of illumination (let's call it R). 
+
+	To determine the reflected illumination at some point on the sphere, 
+	we must integrate over the hemisphere and account for the varying 
+	absorption:
+
+	  L_r = \int_{H^2} L_i a/pi exp(-sigma_a * distance) cos(theta) dw
+
+	In spherical coordinates, the distance term can be written as a
+	function of the outgoing latitude "theta" (using the law of cosines):
+
+	  distance = sqrt(2 - 2 cos(2 theta))
+
+	Integrating this over the sphere, we have
+
+	  L_r = \int_0^{pi/2} 2a exp(-sigma_a sqrt(2 - 2cos(2 theta)))
+	                         cos(theta) sin(theta) dtheta
+		  = L_i * A
+
+	where
+	  
+	  A = a*(1-2exp(-2 sigma_a) sigma_a - exp(-2sigma_a)) / (2sigma_a^2)
+
+	Then the incident radiance seen by a camera located in the middle
+	of the sphere is
+
+	exp(-sigma_a) (1 + A + A^2 + ...) = exp(-sigma_a) / (1-A)
+
+	The following tests this for both the path tracer and the MIS path
+	tracer, with two different values of "a".
+
+	Caveat: because Nori only supports triangle meshes, the sphere
+	is only approximate.
+-->
+
+<test type="ttest">
+	.1, .2, .3, .5
+	<string name="references" value="1.61025, 1.33062, 1.1201, 0.824361"/>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="10"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<mesh type="obj">
+			<string name="filename" value="furnace.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.5, 0.5, 0.5"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1, 1, 1"/>
+			</luminaire>
+		</mesh>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="10"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<mesh type="obj">
+			<string name="filename" value="furnace.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.5, 0.5, 0.5"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1, 1, 1"/>
+			</luminaire>
+		</mesh>
+	</scene>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="10"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<mesh type="obj">
+			<string name="filename" value="furnace.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.8, 0.8, 0.8"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1, 1, 1"/>
+			</luminaire>
+		</mesh>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="10"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<mesh type="obj">
+			<string name="filename" value="furnace.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.8, 0.8, 0.8"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1, 1, 1"/>
+			</luminaire>
+		</mesh>
+	</scene>
+</test>
