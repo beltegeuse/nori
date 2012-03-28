@@ -1,50 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-	Furnace with absorption
+	Furnace with scattering
 
-	This test has the camera located inside a diffuse sphere with 
-	emittance 1, albedo "a", and absorption coefficient "sigma_a".
-	There is no volume scattering. By symmetry, each point on the 
-	sphere reflects the same amount of illumination (let's call it L_r). 
-
-	To determine the reflected illumination at some point on the sphere, 
-	we must integrate over the hemisphere and account for the directionally
-	varying absorption:
-
-	  L_r = \int_{H^2} L_i a/pi exp(-sigma_a * distance) cos(theta) dw
-
-	In spherical coordinates, the distance term can be written as a
-	function of the outgoing latitude "theta" (using the law of cosines
-	and some triangle geometry):
-
-	  distance = sqrt(2 - 2 cos(2 theta))
-
-	Integrating this over the sphere, we have
-
-	  L_r = \int_0^{pi/2} 2a exp(-sigma_a sqrt(2 - 2cos(2 theta)))
-	                         cos(theta) sin(theta) dtheta
-		  = L_i * A
-
-	where
-	  
-	  A = a*(1-2exp(-2 sigma_a) sigma_a - exp(-2sigma_a)) / (2sigma_a^2)
-
-	Then the incident radiance seen by a camera located in the middle
-	of the sphere is
-
-	exp(-sigma_a) (1 + A + A^2 + ...) = exp(-sigma_a) / (1-A)
-
-	The following tests this for both the path tracer and the MIS path
-	tracer, with two different values of "a".
+	This test is essentially the same as the isotropic furnace, but the
+	furnace is now filled with a purely scattering medium. This does not 
+	change anything about the answer.
 
 	Caveat: because Nori only supports triangle meshes, the sphere
 	is only approximate.
 -->
 
 <test type="ttest">
-	<string name="references"
-		value="1.61025, 1.33062, 1.1201, 0.824361     1.61025, 1.33062, 1.1201, 0.824361"/>
+	<string name="references" value="2, 2, 2, 2, 2, 2, 2, 2"/>
 
 	<scene>
 		<integrator type="path"/>
@@ -66,37 +34,8 @@
 		</mesh>
 
 		<medium type="homogeneous">
-			<color name="sigmaS" value="0.0 0.0 0.0"/>
-			<color name="sigmaA" value="0.1 0.1 0.1"/>
-			<transform name="toWorld">
-				<scale value="10 10 10"/>
-				<translate value="-5 -5 -5"/>
-			</transform>
-		</medium>
-	</scene>
-
-	<scene>
-		<integrator type="path"/>
-
-		<camera type="perspective">
-			<float name="fov" value="0.001"/>
-			<integer name="width" value="1"/>
-			<integer name="height" value="1"/>
-		</camera>
-
-		<mesh type="obj">
-			<string name="filename" value="invsphere.obj"/>
-			<bsdf type="diffuse">
-				<color name="albedo" value="0.5, 0.5, 0.5"/>
-			</bsdf>
-			<luminaire type="area">
-				<color name="radiance" value="1, 1, 1"/>
-			</luminaire>
-		</mesh>
-
-		<medium type="homogeneous">
-			<color name="sigmaS" value="0.0 0.0 0.0"/>
-			<color name="sigmaA" value="0.2 0.2 0.2"/>
+			<color name="sigmaA" value="0.0 0.0 0.0"/>
+			<color name="sigmaS" value="0.1 0.1 0.1"/>
 			<transform name="toWorld">
 				<scale value="10 10 10"/>
 				<translate value="-5 -5 -5"/>
@@ -124,8 +63,8 @@
 		</mesh>
 
 		<medium type="homogeneous">
-			<color name="sigmaS" value="0.0 0.0 0.0"/>
-			<color name="sigmaA" value="0.3 0.3 0.3"/>
+			<color name="sigmaA" value="0.0 0.0 0.0"/>
+			<color name="sigmaS" value="0.2 0.2 0.2"/>
 			<transform name="toWorld">
 				<scale value="10 10 10"/>
 				<translate value="-5 -5 -5"/>
@@ -153,8 +92,37 @@
 		</mesh>
 
 		<medium type="homogeneous">
-			<color name="sigmaS" value="0.0 0.0 0.0"/>
-			<color name="sigmaA" value="0.5 0.5 0.5"/>
+			<color name="sigmaA" value="0.0 0.0 0.0"/>
+			<color name="sigmaS" value="0.3 0.3 0.3"/>
+			<transform name="toWorld">
+				<scale value="10 10 10"/>
+				<translate value="-5 -5 -5"/>
+			</transform>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+		</camera>
+
+		<mesh type="obj">
+			<string name="filename" value="invsphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0.5, 0.5, 0.5"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1, 1, 1"/>
+			</luminaire>
+		</mesh>
+
+		<medium type="homogeneous">
+			<color name="sigmaA" value="0.0 0.0 0.0"/>
+			<color name="sigmaS" value="0.5 0.5 0.5"/>
 			<transform name="toWorld">
 				<scale value="10 10 10"/>
 				<translate value="-5 -5 -5"/>
@@ -182,8 +150,8 @@
 		</mesh>
 
 		<medium type="homogeneous">
-			<color name="sigmaS" value="0.0 0.0 0.0"/>
-			<color name="sigmaA" value="0.1 0.1 0.1"/>
+			<color name="sigmaA" value="0.0 0.0 0.0"/>
+			<color name="sigmaS" value="0.1 0.1 0.1"/>
 			<transform name="toWorld">
 				<scale value="10 10 10"/>
 				<translate value="-5 -5 -5"/>
@@ -211,8 +179,8 @@
 		</mesh>
 
 		<medium type="homogeneous">
-			<color name="sigmaS" value="0.0 0.0 0.0"/>
-			<color name="sigmaA" value="0.2 0.2 0.2"/>
+			<color name="sigmaA" value="0.0 0.0 0.0"/>
+			<color name="sigmaS" value="0.2 0.2 0.2"/>
 			<transform name="toWorld">
 				<scale value="10 10 10"/>
 				<translate value="-5 -5 -5"/>
@@ -240,8 +208,8 @@
 		</mesh>
 
 		<medium type="homogeneous">
-			<color name="sigmaS" value="0.0 0.0 0.0"/>
-			<color name="sigmaA" value="0.3 0.3 0.3"/>
+			<color name="sigmaA" value="0.0 0.0 0.0"/>
+			<color name="sigmaS" value="0.3 0.3 0.3"/>
 			<transform name="toWorld">
 				<scale value="10 10 10"/>
 				<translate value="-5 -5 -5"/>
@@ -269,8 +237,8 @@
 		</mesh>
 
 		<medium type="homogeneous">
-			<color name="sigmaS" value="0.0 0.0 0.0"/>
-			<color name="sigmaA" value="0.5 0.5 0.5"/>
+			<color name="sigmaA" value="0.0 0.0 0.0"/>
+			<color name="sigmaS" value="0.5 0.5 0.5"/>
 			<transform name="toWorld">
 				<scale value="10 10 10"/>
 				<translate value="-5 -5 -5"/>
