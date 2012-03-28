@@ -148,21 +148,19 @@ protected:
 			: n((uint32_t) -1), uv((uint32_t) -1) {
 			QStringList tokens = string.split("/");
 
-			if (tokens.size() < 1 || tokens.size() > 3)
+			if (tokens.size() != 1 && tokens.size() != 3)
 				goto fail;
 
 			bool ok;
 			p  = (uint32_t) tokens[0].toInt(&ok) - 1; if (!ok) goto fail;
-			
-			if (tokens.size() == 2) {
-				if (string.contains("//")) {
+
+			if (tokens.size() == 3) {
+				if (tokens[1].length() > 0) {
 					uv = (uint32_t) tokens[1].toInt(&ok) - 1; if (!ok) goto fail;
-				} else {
-					n  = (uint32_t) tokens[1].toInt(&ok) - 1; if (!ok) goto fail;
 				}
-			} else if (tokens.size() == 3) {
-				uv = (uint32_t) tokens[1].toInt(&ok) - 1; if (!ok) goto fail;
-				n  = (uint32_t) tokens[2].toInt(&ok) - 1; if (!ok) goto fail;
+				if (tokens[2].length() > 0) {
+					n  = (uint32_t) tokens[2].toInt(&ok) - 1; if (!ok) goto fail;
+				}
 			}
 
 			return;
