@@ -25,6 +25,10 @@
 #include <fcntl.h>
 #endif
 
+#if defined(PLATFORM_WINDOWS)
+#include <windows.h>
+#endif
+
 NORI_NAMESPACE_BEGIN
 
 /**
@@ -82,7 +86,7 @@ public:
 			if (close(fd) != 0)
 				throw NoriException("close(): unable to close file descriptor!");
 		#elif defined(PLATFORM_WINDOWS)
-			m_file = CreateFile(filename.data(), GENERIC_READ, 
+			m_file = CreateFileA(filename.data(), GENERIC_READ, 
 				FILE_SHARE_READ, NULL, OPEN_EXISTING, 
 				FILE_ATTRIBUTE_NORMAL, NULL);
 			if (m_file == INVALID_HANDLE_VALUE)
