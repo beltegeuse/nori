@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+	This file verifies the volumetric path tracer by performing a series of radiance
+	computations involving scattering in isotropic planar slabs (which are then compared 
+	against reference values)
+
+	      Camera -> *   * <- Emitter
+	                 \  |
+	                   \|
+	========================================
+			   Scattering layer
+	========================================
+
+	The setup is slightly approximate here: a distant discretized spherical emitter at
+	normal incidence causes irradiance 1 at an index-matched slab boundary at z=0. 
+	A perspective camera with a small field of view measures the scattered radiance 
+	along different inclinations. 
+
+	There are separate testcases for both types of path tracers (MI & non-MI) and
+	a few arbitrarily chosen configurations:
+
+	Slab thickness = 0.25:
+		cos(theta_r) = 0.1, albedo = 0.2  => R = 0.04513
+		cos(theta_r) = 0.1, albedo = 0.8  => R = 0.22110
+		cos(theta_r) = 0.7, albedo = 0.2  => R = 0.01423
+		cos(theta_r) = 0.7, albedo = 0.8  => R = 0.07028
+
+	Slab thickness = 2:
+		cos(theta_r) = 1.0, albedo = 1.0  => R = 0.45975
+		cos(theta_r) = 1.0, albedo = 0.6  => R = 0.12680
+		cos(theta_r) = 0.3, albedo = 1.0  => R = 0.57402
+		cos(theta_r) = 0.3, albedo = 0.6  => R = 0.18095
+
+	The reference values were obtained from:
+	  Multiple Light Scattering (Tables, Formulas, and Applications), Vol.1
+	  H.C. van de Hulst
+	  Academic Press, 1980
+
+-->
+<test type="ttest">
+	<string name="references" value="0.04513, 0.22110, 0.01423, 0.07028 0.45975, 0.12680, 0.57402, 0.18095, 0.04513, 0.22110, 0.01423, 0.07028 0.45975, 0.12680, 0.57402, 0.18095"/>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="84.261"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 0.25 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".8 .8 .8"/>
+			<color name="sigmaS" value=".2 .2 .2"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 0.25"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="84.261"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 0.25 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".2 .2 .2"/>
+			<color name="sigmaS" value=".8 .8 .8"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 0.25"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="45.573"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 0.25 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".8 .8 .8"/>
+			<color name="sigmaS" value=".2 .2 .2"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 0.25"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="45.573"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 0.25 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".2 .2 .2"/>
+			<color name="sigmaS" value=".8 .8 .8"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 0.25"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 2 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value="0 0 0"/>
+			<color name="sigmaS" value="1 1 1"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 2"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 2 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".4 .4 .4"/>
+			<color name="sigmaS" value=".6 .6 .6"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 2"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="72.542"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 2 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value="0 0 0"/>
+			<color name="sigmaS" value="1 1 1"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 2"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="path"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="72.542"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 2 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".4 .4 .4"/>
+			<color name="sigmaS" value=".6 .6 .6"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 2"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="84.261"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 0.25 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".8 .8 .8"/>
+			<color name="sigmaS" value=".2 .2 .2"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 0.25"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="84.261"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 0.25 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".2 .2 .2"/>
+			<color name="sigmaS" value=".8 .8 .8"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 0.25"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="45.573"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 0.25 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".8 .8 .8"/>
+			<color name="sigmaS" value=".2 .2 .2"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 0.25"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="45.573"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 0.25 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".2 .2 .2"/>
+			<color name="sigmaS" value=".8 .8 .8"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 0.25"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 2 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value="0 0 0"/>
+			<color name="sigmaS" value="1 1 1"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 2"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 2 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".4 .4 .4"/>
+			<color name="sigmaS" value=".6 .6 .6"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 2"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="72.542"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 2 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value="0 0 0"/>
+			<color name="sigmaS" value="1 1 1"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 2"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+
+	<scene>
+		<integrator type="mipath"/>
+
+		<camera type="perspective">
+			<float name="fov" value="0.0001"/>
+			<integer name="width" value="1"/>
+			<integer name="height" value="1"/>
+
+			<transform name="toWorld">
+				<translate value="0 0 -1"/>
+				<rotate axis="1,0,0" angle="72.542"/>
+			</transform>
+		</camera>
+
+		<mesh type="obj">
+			<!-- Distant perpendicular illumination -->
+			<string name="filename" value="sphere.obj"/>
+			<bsdf type="diffuse">
+				<color name="albedo" value="0, 0, 0"/>
+			</bsdf>
+			<luminaire type="area">
+				<color name="radiance" value="1000000, 1000000, 1000000"/>
+			</luminaire>
+			<transform name="toWorld">
+				<translate value="0 0 -1000"/>
+			</transform>
+		</mesh>
+
+		<!-- Homogenous slab of optical thickness b = 2 -->
+		<medium type="homogeneous">
+			<color name="sigmaA" value=".4 .4 .4"/>
+			<color name="sigmaS" value=".6 .6 .6"/>
+
+			<transform name="toWorld">
+				<translate value="-.5 -.5 0"/>
+				<scale value="10000 10000 2"/>
+			</transform>
+
+			<phase type="isotropic"/>
+		</medium>
+	</scene>
+</test>
