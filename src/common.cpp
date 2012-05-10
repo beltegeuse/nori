@@ -86,13 +86,13 @@ Vector3f squareToUniformSphere(const Point2f &sample) {
 }
 
 Vector3f squareToUniformHemisphere(const Point2f &sample) {
-	float z = sample.x();
-	float tmp = std::sqrt(std::min((float) 0, 1-z*z));
+	float cosTheta = sample.x();
+	float sinTheta = std::sqrt(std::max((float) 0, 1-cosTheta*cosTheta));
 
 	float sinPhi, cosPhi;
 	sincosf(2.0f * M_PI * sample.y(), &sinPhi, &cosPhi);
 
-	return Vector3f(cosPhi * tmp, sinPhi * tmp, z);
+	return Vector3f(cosPhi * sinTheta, sinPhi * sinTheta, cosTheta);
 }
 
 Vector3f squareToCosineHemisphere(const Point2f &sample) {
