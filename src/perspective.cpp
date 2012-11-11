@@ -50,7 +50,7 @@ public:
 
 		/* Near and far clipping planes in world-space units */
 		m_nearClip = propList.getFloat("nearClip", 1e-4f);
-		m_farClip = propList.getFloat("nearClip", 1e4f);
+		m_farClip = propList.getFloat("farClip", 1e4f);
 
 		/* Denotes the world-space distance from the camera's aperture
 		   to the focal plane */
